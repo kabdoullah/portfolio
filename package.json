@@ -2,6 +2,9 @@
   "name": "portfolio",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "imports": {
     "#/*": "./src/*"
   },
@@ -15,6 +18,7 @@
     "db:setup": "drizzle-kit push && tsx scripts/seed.ts",
     "build": "vite build",
     "preview": "vite preview",
+    "start": "tsx scripts/migrate.ts && vite preview --host --port ${PORT:-3000}",
     "test": "vitest run",
     "lint": "eslint",
     "format": "prettier --write . && eslint --fix",

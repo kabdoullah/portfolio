@@ -9,6 +9,13 @@ import tailwindcss from '@tailwindcss/vite'
 
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
+  // Production is served via `vite preview` (see the `start` script). Vite blocks
+  // requests with an unknown Host header; allow the platform domain (Railway) so
+  // the public URL is not rejected with a 403.
+  preview: {
+    host: true,
+    allowedHosts: true,
+  },
   plugins: [
     devtools(),
     tailwindcss(),
