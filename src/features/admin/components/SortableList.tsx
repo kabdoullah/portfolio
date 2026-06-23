@@ -72,14 +72,14 @@ function SortableRow({ id, children }: { id: string; children: ReactNode }) {
     <div
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/60 p-3 ${
-        isDragging ? 'opacity-60' : ''
+      className={`flex items-center gap-2 rounded-md border border-border bg-card p-3 ${
+        isDragging ? 'opacity-60 ring-1 ring-primary/40' : ''
       }`}
     >
       <button
         type="button"
-        className="cursor-grab text-slate-500 hover:text-slate-300 active:cursor-grabbing"
-        aria-label="Réordonner"
+        className="cursor-grab rounded text-muted-foreground hover:text-foreground active:cursor-grabbing"
+        aria-label="Déplacer pour réordonner"
         {...attributes}
         {...listeners}
       >

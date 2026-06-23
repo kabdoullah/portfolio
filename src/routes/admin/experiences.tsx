@@ -24,22 +24,26 @@ function AdminExperiences() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold">
-          Expériences <span className="text-slate-500">({experiences.length})</span>
+        <h1 className="font-display text-2xl font-bold tracking-tight">
+          Expériences{' '}
+          <span className="font-mono text-lg font-normal tabular-nums text-muted-foreground">
+            {String(experiences.length).padStart(2, '0')}
+          </span>
         </h1>
         <Button
-          className="bg-blue-600 hover:bg-blue-500"
           onClick={() => {
             setEditing(undefined)
             setFormOpen(true)
           }}
         >
-          <Plus className="size-4" /> Ajouter
+          <Plus className="size-4" /> Ajouter une expérience
         </Button>
       </div>
 
       {experiences.length === 0 ? (
-        <p className="text-sm text-slate-400">Aucune expérience.</p>
+        <p className="rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+          Aucune expérience pour l’instant. Ajoutez votre parcours pour l’afficher sur le site.
+        </p>
       ) : (
         <SortableList
           items={experiences}
@@ -50,7 +54,7 @@ function AdminExperiences() {
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <span className="truncate font-medium">{experience.role}</span>
-                <div className="text-xs text-slate-500">
+                <div className="font-mono text-xs text-muted-foreground">
                   {experience.company} · {experience.period}
                 </div>
               </div>
@@ -70,7 +74,7 @@ function AdminExperiences() {
                   size="icon"
                   variant="ghost"
                   aria-label={`Supprimer ${experience.role}`}
-                  className="text-red-400"
+                  className="text-destructive hover:text-destructive"
                   onClick={() => setDeleting(experience)}
                 >
                   <Trash2 className="size-4" />

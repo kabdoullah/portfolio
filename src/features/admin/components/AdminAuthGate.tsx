@@ -10,6 +10,10 @@ import { ADMIN_AUTH_KEY } from '#/lib/utils/constants'
 // env var; a granted session is kept in sessionStorage (cleared on tab close).
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD ?? 'admin2025'
 
+// Warp threads strung across the panel's top — the loom, ready to be worked.
+const WARP_TOP =
+  'repeating-linear-gradient(90deg, color-mix(in oklab, var(--thread) 50%, transparent) 0 1px, transparent 1px 9px)'
+
 export function AdminAuthGate({ children }: { children: ReactNode }) {
   const [authed, setAuthed] = useState(false)
   const [ready, setReady] = useState(false)
@@ -38,42 +42,53 @@ export function AdminAuthGate({ children }: { children: ReactNode }) {
   if (authed) return <>{children}</>
 
   return (
-    <div className="flex min-h-svh items-center justify-center bg-slate-950 p-4 text-slate-100">
+    <div className="admin flex min-h-svh items-center justify-center bg-background p-4 text-foreground">
       <form
         onSubmit={handleSubmit}
-        className="flex w-full max-w-sm flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900 p-8"
+        className="relative w-full max-w-sm overflow-hidden rounded-xl border border-thread/40 bg-card p-8"
       >
-        <div className="flex flex-col items-center gap-2 text-center">
-          <span className="flex size-12 items-center justify-center rounded-full bg-blue-500/15 text-blue-400">
-            <Lock className="size-5" />
-          </span>
-          <h1 className="font-display text-xl font-bold">Espace d’administration</h1>
-          <p className="text-sm text-slate-400">
-            Saisissez le mot de passe pour continuer.
-          </p>
+        {/* Selvedge — the bound top edge of the cloth. */}
+        <span
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-1"
+          style={{ backgroundImage: WARP_TOP }}
+        />
+
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
+            <span className="font-mono text-[0.65rem] uppercase tracking-[0.25em] text-secondary">
+              AKC · atelier
+            </span>
+            <h1 className="font-display text-xl font-bold tracking-tight">
+              Ouvrir l’atelier
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Cet espace gère le contenu du portfolio. Entrez le mot de passe pour continuer.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="admin-password">Mot de passe</Label>
+            <Input
+              id="admin-password"
+              type="password"
+              autoFocus
+              aria-invalid={error}
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                setError(false)
+              }}
+            />
+            {error ? (
+              <p className="flex items-center gap-1.5 text-xs text-destructive">
+                <Lock className="size-3.5" /> Mot de passe incorrect. Réessayez.
+              </p>
+            ) : null}
+          </div>
+
+          <Button type="submit">Ouvrir l’atelier</Button>
         </div>
-        <div className="flex flex-col gap-1.5">
-          <Label htmlFor="admin-password" className="text-slate-300">
-            Mot de passe
-          </Label>
-          <Input
-            id="admin-password"
-            type="password"
-            autoFocus
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value)
-              setError(false)
-            }}
-            className="border-slate-700 bg-slate-800 text-slate-100"
-          />
-          {error ? (
-            <p className="text-xs text-red-400">Mot de passe incorrect.</p>
-          ) : null}
-        </div>
-        <Button type="submit" className="bg-blue-600 hover:bg-blue-500">
-          Se connecter
-        </Button>
       </form>
     </div>
   )

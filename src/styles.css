@@ -63,6 +63,34 @@
   --thread: #b8693f;
 }
 
+/* ── Admin atelier (the loom's workbench) ───────────────────────────────────
+   A deeper, utilitarian shift of the loom palette. Scoped to .admin so the
+   workbench stays dark regardless of the site's theme toggle. Reuses clay and
+   ochre so dialogs portaled to the document root still read as the same atelier. */
+.admin {
+  --background: #0f1322;
+  --foreground: #ece5d5;
+  --card: #161b2e;
+  --card-foreground: #ece5d5;
+  --popover: #161b2e;
+  --popover-foreground: #ece5d5;
+  --primary: #d9602f; /* clay */
+  --primary-foreground: #1a1208;
+  --secondary: #d9a441; /* ochre — saved/confirmed */
+  --secondary-foreground: #1a1208;
+  --muted: #1c2238;
+  --muted-foreground: #8b8676;
+  --accent: #232b47; /* quiet surface for ghost-hover, not the loud ochre */
+  --accent-foreground: #ece5d5;
+  --destructive: #c2461f; /* burnt clay — unravelling */
+  --destructive-foreground: #ece5d5;
+  --border: #28304e;
+  --input: #28304e;
+  --ring: #d9602f;
+  --thread: #b8693f;
+  --radius: 0.5rem;
+}
+
 @theme inline {
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;

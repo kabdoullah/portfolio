@@ -33,16 +33,21 @@ function AdminProjects() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold">
-          Projets <span className="text-slate-500">({projects.length})</span>
+        <h1 className="font-display text-2xl font-bold tracking-tight">
+          Projets{' '}
+          <span className="font-mono text-lg font-normal tabular-nums text-muted-foreground">
+            {String(projects.length).padStart(2, '0')}
+          </span>
         </h1>
-        <Button className="bg-blue-600 hover:bg-blue-500" onClick={openNew}>
-          <Plus className="size-4" /> Ajouter
+        <Button onClick={openNew}>
+          <Plus className="size-4" /> Ajouter un projet
         </Button>
       </div>
 
       {projects.length === 0 ? (
-        <p className="text-sm text-slate-400">Aucun projet. Ajoutez-en un.</p>
+        <p className="rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+          Aucun projet pour l’instant. Ajoutez-en un pour le voir apparaître sur le site.
+        </p>
       ) : (
         <SortableList
           items={projects}
@@ -60,7 +65,7 @@ function AdminProjects() {
                     </Badge>
                   ) : null}
                 </div>
-                <span className="text-xs text-slate-500">
+                <span className="font-mono text-xs text-muted-foreground">
                   {project.type} · {project.year}
                 </span>
               </div>
@@ -77,7 +82,7 @@ function AdminProjects() {
                   size="icon"
                   variant="ghost"
                   aria-label={`Supprimer ${project.title}`}
-                  className="text-red-400"
+                  className="text-destructive hover:text-destructive"
                   onClick={() => setDeleting(project)}
                 >
                   <Trash2 className="size-4" />

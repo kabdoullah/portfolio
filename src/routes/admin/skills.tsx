@@ -36,11 +36,14 @@ function AdminSkills() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-2xl font-bold">
-        Compétences <span className="text-slate-500">({data.skills.length})</span>
+      <h1 className="font-display text-2xl font-bold tracking-tight">
+        Compétences{' '}
+        <span className="font-mono text-lg font-normal tabular-nums text-muted-foreground">
+          {String(data.skills.length).padStart(2, '0')}
+        </span>
       </h1>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-slate-800 bg-slate-900 p-4">
+      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card p-4">
         <Input
           className="w-48"
           placeholder="Nom de la compétence"
@@ -60,7 +63,7 @@ function AdminSkills() {
             ))}
           </SelectContent>
         </Select>
-        <Button className="bg-blue-600 hover:bg-blue-500" onClick={addSkill}>
+        <Button onClick={addSkill}>
           <Plus className="size-4" /> Ajouter
         </Button>
       </div>
@@ -71,7 +74,10 @@ function AdminSkills() {
           if (skills.length === 0) return null
           return (
             <div key={cat} className="flex flex-col gap-2">
-              <h2 className="text-sm font-semibold text-slate-300">{cat}</h2>
+              <h2 className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-secondary">
+                <span className="h-px w-5 bg-secondary/50" aria-hidden />
+                {cat}
+              </h2>
               <div className="flex flex-wrap gap-2">
                 {skills.map((skill) => (
                   <Badge key={skill.id} variant="secondary" className="gap-1.5 py-1.5">

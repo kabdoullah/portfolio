@@ -52,14 +52,14 @@ function AdminSettings() {
   return (
     <div className="flex max-w-2xl flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold">Paramètres</h1>
-        <Button className="bg-blue-600 hover:bg-blue-500" onClick={handleSave}>
+        <h1 className="font-display text-2xl font-bold tracking-tight">Paramètres</h1>
+        <Button onClick={handleSave}>
           <Save className="size-4" /> Enregistrer
         </Button>
       </div>
 
-      <section className="flex flex-col gap-4 rounded-xl border border-slate-800 bg-slate-900 p-6">
-        <h2 className="text-sm font-semibold text-slate-300">Photo de profil</h2>
+      <section className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6">
+        <h2 className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-secondary before:h-px before:w-5 before:bg-secondary/50 before:content-['']">Photo de profil</h2>
         <div className="flex items-center gap-4">
           {draft.profilePhoto ? (
             <img
@@ -68,13 +68,13 @@ function AdminSettings() {
               className="size-20 rounded-xl object-cover"
             />
           ) : (
-            <div className="size-20 rounded-xl bg-slate-800" />
+            <div className="size-20 rounded-lg border border-dashed border-border bg-muted" />
           )}
           <Input type="file" accept="image/*" onChange={handlePhoto} className="max-w-xs" />
         </div>
       </section>
 
-      <section className="grid grid-cols-1 gap-4 rounded-xl border border-slate-800 bg-slate-900 p-6 sm:grid-cols-2">
+      <section className="grid grid-cols-1 gap-4 rounded-xl border border-border bg-card p-6 sm:grid-cols-2">
         <FieldText label="Nom" value={draft.name} onChange={(v) => set('name', v)} />
         <FieldText label="Titre" value={draft.title} onChange={(v) => set('title', v)} />
         <FieldText label="Localisation" value={draft.location} onChange={(v) => set('location', v)} />
@@ -88,8 +88,8 @@ function AdminSettings() {
         </div>
       </section>
 
-      <section className="flex flex-col gap-3 rounded-xl border border-slate-800 bg-slate-900 p-6">
-        <h2 className="text-sm font-semibold text-slate-300">
+      <section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-6">
+        <h2 className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-secondary before:h-px before:w-5 before:bg-secondary/50 before:content-['']">
           Accroches (effet machine à écrire)
         </h2>
         <BulletListInput
@@ -99,8 +99,8 @@ function AdminSettings() {
         />
       </section>
 
-      <section className="flex flex-col gap-3 rounded-xl border border-slate-800 bg-slate-900 p-6">
-        <h2 className="text-sm font-semibold text-slate-300">Statistiques</h2>
+      <section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-6">
+        <h2 className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-secondary before:h-px before:w-5 before:bg-secondary/50 before:content-['']">Statistiques</h2>
         {draft.stats.map((stat, index) => (
           // Stable index: stats are a small ordered list edited in place.
           <div key={index} className="flex gap-2">
@@ -130,7 +130,7 @@ function AdminSettings() {
         <Button
           variant="outline"
           size="sm"
-          className="w-fit border-slate-700 bg-transparent text-slate-200"
+          className="w-fit"
           onClick={() => set('stats', [...draft.stats, { label: '', value: '' }])}
         >
           <Plus className="size-4" /> Ajouter une stat
@@ -139,10 +139,12 @@ function AdminSettings() {
 
       <EducationSection />
 
-      <section className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900 p-6">
+      <section className="flex items-center justify-between rounded-xl border border-border bg-card p-6">
         <div>
-          <h2 className="text-sm font-semibold text-slate-300">Disponibilité</h2>
-          <p className="text-xs text-slate-500">Affiche le badge « Disponible » sur le site.</p>
+          <h2 className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-secondary before:h-px before:w-5 before:bg-secondary/50 before:content-['']">Disponibilité</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Affiche le badge « Disponible pour missions » sur le site.
+          </p>
         </div>
         <Switch
           checked={draft.available}
@@ -187,10 +189,10 @@ function EducationSection() {
   }
 
   return (
-    <section className="flex flex-col gap-3 rounded-xl border border-slate-800 bg-slate-900 p-6">
-      <h2 className="text-sm font-semibold text-slate-300">Formation</h2>
+    <section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-6">
+      <h2 className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-secondary before:h-px before:w-5 before:bg-secondary/50 before:content-['']">Formation</h2>
       {data.education.map((item) => (
-        <div key={item.id} className="flex flex-col gap-2 rounded-lg border border-slate-800 p-3">
+        <div key={item.id} className="flex flex-col gap-2 rounded-md border border-border p-3">
           <div className="grid gap-2 sm:grid-cols-2">
             <Input
               placeholder="Diplôme"
@@ -216,7 +218,7 @@ function EducationSection() {
           <Button
             variant="ghost"
             size="sm"
-            className="w-fit self-end text-red-400"
+            className="w-fit self-end text-destructive hover:text-destructive"
             onClick={() => dispatch({ type: 'DELETE_EDUCATION', payload: item.id })}
           >
             <Trash2 className="size-4" /> Supprimer
@@ -226,7 +228,7 @@ function EducationSection() {
       <Button
         variant="outline"
         size="sm"
-        className="w-fit border-slate-700 bg-transparent text-slate-200"
+        className="w-fit"
         onClick={add}
       >
         <Plus className="size-4" /> Ajouter une formation
