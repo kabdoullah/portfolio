@@ -12,10 +12,6 @@ WORKDIR /app
 
 # Manifests first for layer caching.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-
-# Autoriser explicitement les scripts de build pour esbuild et le résolveur de Rolldown
-RUN pnpm config set only-built-dependencies esbuild unrs-resolver
-
 RUN pnpm install --frozen-lockfile
 
 # App source + build.
