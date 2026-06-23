@@ -1,12 +1,33 @@
-import { createContext, useEffect, useReducer, useRef } from 'react'
+import { createContext } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { Dispatch, ReactNode } from 'react'
 import { getDefaultData } from '#/features/data/defaults'
+import { exportDataAsJson, importDataFromJson } from '#/features/data/storage'
+import { getPortfolioData } from '#/features/data/server/portfolio-data'
 import {
-  exportDataAsJson,
-  importDataFromJson,
-  loadPortfolioData,
-  savePortfolioData,
-} from '#/features/data/storage'
+  createProject,
+  deleteProject,
+  reorderProjects,
+  updateProject,
+} from '#/features/data/server/projects'
+import {
+  createExperience,
+  deleteExperience,
+  reorderExperiences,
+  updateExperience,
+} from '#/features/data/server/experiences'
+import {
+  createSkill,
+  deleteSkill,
+  updateSkill,
+} from '#/features/data/server/skills'
+import {
+  createEducation,
+  deleteEducation,
+  updateEducation,
+} from '#/features/data/server/education'
+import { updatePersonalInfo } from '#/features/data/server/settings'
+import { importPortfolioData, resetToDefaults } from '#/features/data/server/data'
 import type {
   Education,
   Experience,
@@ -16,10 +37,11 @@ import type {
   Skill,
 } from '#/features/data/types'
 
-// Command pattern: every mutation is an explicit, named action. UI never mutates
-// state directly — it dispatches one of these and the provider persists the result.
+// Command pattern, preserved across the SQLite migration: every mutation is an
+// explicit, named action. The public shape of `dispatch` is unchanged so no
+// consuming component had to change — only the implementation moved from a
+// localStorage reducer to Server Functions (DB writes) behind TanStack Query.
 export type DataAction =
-  | { type: 'HYDRATE'; payload: PortfolioData }
   | { type: 'UPDATE_PERSONAL_INFO'; payload: PersonalInfo }
   | { type: 'ADD_PROJECT'; payload: Project }
   | { type: 'UPDATE_PROJECT'; payload: Project }
@@ -38,106 +60,57 @@ export type DataAction =
   | { type: 'IMPORT_DATA'; payload: PortfolioData }
   | { type: 'RESET_TO_DEFAULTS' }
 
-/** Apply an `order` index derived from the position of each id in `orderedIds`. */
-function applyOrder<T extends { id: string; order: number }>(
-  items: T[],
-  orderedIds: string[],
-): T[] {
-  const rank = new Map(orderedIds.map((id, index) => [id, index]))
-  return [...items]
-    .map((item) => ({ ...item, order: rank.get(item.id) ?? item.order }))
-    .sort((a, b) => a.order - b.order)
-}
+export const PORTFOLIO_DATA_KEY = ['portfolio-data'] as const
 
-export function portfolioDataReducer(
-  state: PortfolioData,
-  action: DataAction,
-): PortfolioData {
+/** Route one named action to its Server Function. Returns the write promise. */
+function runAction(action: DataAction): Promise<unknown> {
   switch (action.type) {
-    case 'HYDRATE':
-    case 'IMPORT_DATA':
-      return action.payload
-    case 'RESET_TO_DEFAULTS':
-      return getDefaultData()
     case 'UPDATE_PERSONAL_INFO':
-      return { ...state, personalInfo: action.payload }
+      return updatePersonalInfo({ data: action.payload })
 
     case 'ADD_PROJECT':
-      return { ...state, projects: [...state.projects, action.payload] }
+      return createProject({ data: action.payload })
     case 'UPDATE_PROJECT':
-      return {
-        ...state,
-        projects: state.projects.map((p) =>
-          p.id === action.payload.id ? action.payload : p,
-        ),
-      }
+      return updateProject({ data: action.payload })
     case 'DELETE_PROJECT':
-      return {
-        ...state,
-        projects: state.projects.filter((p) => p.id !== action.payload),
-      }
+      return deleteProject({ data: action.payload })
     case 'REORDER_PROJECTS':
-      return { ...state, projects: applyOrder(state.projects, action.payload) }
+      return reorderProjects({ data: action.payload })
 
     case 'ADD_EXPERIENCE':
-      return { ...state, experiences: [...state.experiences, action.payload] }
+      return createExperience({ data: action.payload })
     case 'UPDATE_EXPERIENCE':
-      return {
-        ...state,
-        experiences: state.experiences.map((e) =>
-          e.id === action.payload.id ? action.payload : e,
-        ),
-      }
+      return updateExperience({ data: action.payload })
     case 'DELETE_EXPERIENCE':
-      return {
-        ...state,
-        experiences: state.experiences.filter((e) => e.id !== action.payload),
-      }
+      return deleteExperience({ data: action.payload })
     case 'REORDER_EXPERIENCES':
-      return {
-        ...state,
-        experiences: applyOrder(state.experiences, action.payload),
-      }
+      return reorderExperiences({ data: action.payload })
 
     case 'ADD_SKILL':
-      return { ...state, skills: [...state.skills, action.payload] }
+      return createSkill({ data: action.payload })
     case 'UPDATE_SKILL':
-      return {
-        ...state,
-        skills: state.skills.map((s) =>
-          s.id === action.payload.id ? action.payload : s,
-        ),
-      }
+      return updateSkill({ data: action.payload })
     case 'DELETE_SKILL':
-      return {
-        ...state,
-        skills: state.skills.filter((s) => s.id !== action.payload),
-      }
+      return deleteSkill({ data: action.payload })
 
     case 'ADD_EDUCATION':
-      return { ...state, education: [...state.education, action.payload] }
+      return createEducation({ data: action.payload })
     case 'UPDATE_EDUCATION':
-      return {
-        ...state,
-        education: state.education.map((e) =>
-          e.id === action.payload.id ? action.payload : e,
-        ),
-      }
+      return updateEducation({ data: action.payload })
     case 'DELETE_EDUCATION':
-      return {
-        ...state,
-        education: state.education.filter((e) => e.id !== action.payload),
-      }
+      return deleteEducation({ data: action.payload })
 
-    default:
-      return state
+    case 'IMPORT_DATA':
+      return importPortfolioData({ data: action.payload })
+    case 'RESET_TO_DEFAULTS':
+      return resetToDefaults()
   }
 }
 
 export interface PortfolioDataContextValue {
   data: PortfolioData
   dispatch: Dispatch<DataAction>
-  /** True once client-side data has been read from localStorage. */
+  /** True once real data has been read from the database (vs. seed defaults). */
   isHydrated: boolean
   exportData: () => void
   importData: (file: File) => Promise<void>
@@ -148,37 +121,45 @@ export const PortfolioDataContext =
   createContext<PortfolioDataContextValue | null>(null)
 
 export function PortfolioDataProvider({ children }: { children: ReactNode }) {
-  // SSR-safe: render defaults on the server and first client paint to avoid a
-  // hydration mismatch, then load real data from localStorage after mount.
-  const [data, dispatch] = useReducer(
-    portfolioDataReducer,
-    undefined,
-    getDefaultData,
-  )
-  const hydratedRef = useRef(false)
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    dispatch({ type: 'HYDRATE', payload: loadPortfolioData() })
-    hydratedRef.current = true
-  }, [])
+  const query = useQuery({
+    queryKey: PORTFOLIO_DATA_KEY,
+    queryFn: () => getPortfolioData(),
+  })
 
-  // Persist on every change, but only after hydration so we never overwrite
-  // stored data with the SSR defaults.
-  useEffect(() => {
-    if (!hydratedRef.current) return
-    savePortfolioData(data)
-  }, [data])
+  const invalidate = () =>
+    queryClient.invalidateQueries({ queryKey: PORTFOLIO_DATA_KEY })
+
+  // One mutation funnels every action; the cache is refreshed on success so the
+  // returned row(s) become the new source of truth without a manual merge.
+  const mutation = useMutation({
+    mutationFn: runAction,
+    onSuccess: () => invalidate(),
+  })
+
+  // SSR / first paint shows the seed defaults (the DB may not be loaded yet),
+  // matching the previous localStorage behaviour and avoiding hydration drift.
+  const data = query.data ?? getDefaultData()
 
   const value: PortfolioDataContextValue = {
     data,
-    dispatch,
-    isHydrated: hydratedRef.current,
+    isHydrated: query.isSuccess,
+    // Same signature as the old reducer dispatch (fire-and-forget, void).
+    dispatch: (action) => {
+      mutation.mutate(action)
+    },
     exportData: () => exportDataAsJson(data),
     importData: async (file: File) => {
+      // Validate the JSON client-side first (clear error to the user), then the
+      // Server Function validates again before touching the DB.
       const imported = await importDataFromJson(file)
-      dispatch({ type: 'IMPORT_DATA', payload: imported })
+      await importPortfolioData({ data: imported })
+      await invalidate()
     },
-    resetData: () => dispatch({ type: 'RESET_TO_DEFAULTS' }),
+    resetData: () => {
+      mutation.mutate({ type: 'RESET_TO_DEFAULTS' })
+    },
   }
 
   return (

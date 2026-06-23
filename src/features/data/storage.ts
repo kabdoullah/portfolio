@@ -1,35 +1,11 @@
-import { getDefaultData } from '#/features/data/defaults'
 import { portfolioDataSchema } from '#/features/data/schemas'
 import type { PortfolioData } from '#/features/data/types'
 
-export const STORAGE_KEY = 'portfolio_data'
+// Client-side JSON export/import helpers. Persistence itself now lives in the
+// database (see `server/*` Server Functions); these only handle the
+// browser-side file download/upload for the admin's backup/restore feature.
 
 const isBrowser = typeof window !== 'undefined'
-
-/**
- * Read persisted data. Falls back to defaults when there is no storage (SSR),
- * nothing saved yet, or the stored payload fails schema validation.
- */
-export function loadPortfolioData(): PortfolioData {
-  if (!isBrowser) return getDefaultData()
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return getDefaultData()
-    const parsed = portfolioDataSchema.safeParse(JSON.parse(raw))
-    return parsed.success ? parsed.data : getDefaultData()
-  } catch {
-    return getDefaultData()
-  }
-}
-
-/** Persist data, stamping `lastUpdated`. Returns the stored object. No-op on SSR. */
-export function savePortfolioData(data: PortfolioData): PortfolioData {
-  const updated: PortfolioData = { ...data, lastUpdated: new Date().toISOString() }
-  if (isBrowser) {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
-  }
-  return updated
-}
 
 /** Trigger a browser download of the data as pretty-printed JSON. */
 export function exportDataAsJson(data: PortfolioData): void {
@@ -48,6 +24,7 @@ export function exportDataAsJson(data: PortfolioData): void {
 /**
  * Parse + validate an uploaded JSON file. Rejects if the file is not valid JSON
  * or does not match the PortfolioData schema, so callers never apply bad data.
+ * The Server Function validates again before writing to the DB.
  */
 export function importDataFromJson(file: File): Promise<PortfolioData> {
   return new Promise((resolve, reject) => {

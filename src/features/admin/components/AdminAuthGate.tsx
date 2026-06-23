@@ -5,10 +5,11 @@ import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
 import { ADMIN_AUTH_KEY } from '#/lib/utils/constants'
+import { verifyAdminPassword } from '#/features/data/server/admin'
 
-// Local-only gate: there is no backend. The password is checked against a build
-// env var; a granted session is kept in sessionStorage (cleared on tab close).
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD ?? 'admin2025'
+// The password is verified server-side (see `server/admin.ts`) so the secret is
+// never shipped in the client bundle. A granted session is kept in
+// sessionStorage (cleared on tab close).
 
 // Warp threads strung across the panel's top — the loom, ready to be worked.
 const WARP_TOP =
@@ -19,20 +20,29 @@ export function AdminAuthGate({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false)
   const [password, setPassword] = useState('')
   const [error, setError] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     setAuthed(sessionStorage.getItem(ADMIN_AUTH_KEY) === 'true')
     setReady(true)
   }, [])
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    if (password === ADMIN_PASSWORD) {
-      sessionStorage.setItem(ADMIN_AUTH_KEY, 'true')
-      setAuthed(true)
-      setError(false)
-    } else {
+    setSubmitting(true)
+    try {
+      const { isValid } = await verifyAdminPassword({ data: { password } })
+      if (isValid) {
+        sessionStorage.setItem(ADMIN_AUTH_KEY, 'true')
+        setAuthed(true)
+        setError(false)
+      } else {
+        setError(true)
+      }
+    } catch {
       setError(true)
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -87,7 +97,9 @@ export function AdminAuthGate({ children }: { children: ReactNode }) {
             ) : null}
           </div>
 
-          <Button type="submit">Ouvrir l’atelier</Button>
+          <Button type="submit" disabled={submitting}>
+            {submitting ? 'Vérification…' : 'Ouvrir l’atelier'}
+          </Button>
         </div>
       </form>
     </div>
