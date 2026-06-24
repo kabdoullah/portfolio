@@ -7,6 +7,7 @@ export const SECTION_IDS = {
   skills: 'competences',
   projects: 'projets',
   experience: 'experience',
+  education: 'formation',
   contact: 'contact',
 } as const
 
@@ -22,6 +23,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id: SECTION_IDS.skills, label: 'Compétences' },
   { id: SECTION_IDS.projects, label: 'Projets' },
   { id: SECTION_IDS.experience, label: 'Expérience' },
+  { id: SECTION_IDS.education, label: 'Formation' },
   { id: SECTION_IDS.contact, label: 'Contact' },
 ]
 

@@ -7,6 +7,7 @@ import { AboutSection } from '#/features/portfolio/components/AboutSection'
 import { SkillsSection } from '#/features/portfolio/components/SkillsSection'
 import { ProjectsSection } from '#/features/portfolio/components/ProjectsSection'
 import { ExperienceSection } from '#/features/portfolio/components/ExperienceSection'
+import { EducationSection } from '#/features/portfolio/components/EducationSection'
 import { ContactSection } from '#/features/portfolio/components/ContactSection'
 import { WeaveDivider } from '#/components/shared/WeaveDivider'
 import { usePortfolioData } from '#/features/data/usePortfolioData'
@@ -49,6 +50,8 @@ function Home() {
         <ProjectsSection />
         <WeaveDivider />
         <ExperienceSection />
+        <WeaveDivider />
+        <EducationSection />
         <WeaveDivider />
         <ContactSection />
       </main>
