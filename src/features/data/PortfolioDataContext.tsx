@@ -107,6 +107,74 @@ function runAction(action: DataAction): Promise<unknown> {
   }
 }
 
+/** Reorder a list to match `orderedIds`, re-numbering `order` to the new index. */
+function reorderById<T extends { id: string; order: number }>(
+  items: T[],
+  orderedIds: string[],
+): T[] {
+  const byId = new Map(items.map((item) => [item.id, item]))
+  return orderedIds
+    .map((id) => byId.get(id))
+    .filter((item): item is T => item !== undefined)
+    .map((item, index) => ({ ...item, order: index }))
+}
+
+const upsertById = <T extends { id: string }>(items: T[], next: T): T[] =>
+  items.some((item) => item.id === next.id)
+    ? items.map((item) => (item.id === next.id ? next : item))
+    : [...items, next]
+
+const removeById = <T extends { id: string }>(items: T[], id: string): T[] =>
+  items.filter((item) => item.id !== id)
+
+/**
+ * Apply an action to a `PortfolioData` snapshot — the optimistic mirror of the
+ * Server Functions in `runAction`. Lets the cache reflect a write instantly
+ * (before the round-trip lands), so admin edits feel immediate on a slow remote
+ * DB. `onSettled` still invalidates, so the server stays the final authority and
+ * any divergence (e.g. server-assigned ordering) is reconciled on refetch.
+ */
+function applyAction(data: PortfolioData, action: DataAction): PortfolioData {
+  const base: PortfolioData = { ...data, lastUpdated: new Date().toISOString() }
+  switch (action.type) {
+    case 'UPDATE_PERSONAL_INFO':
+      return { ...base, personalInfo: action.payload }
+
+    case 'ADD_PROJECT':
+    case 'UPDATE_PROJECT':
+      return { ...base, projects: upsertById(base.projects, action.payload) }
+    case 'DELETE_PROJECT':
+      return { ...base, projects: removeById(base.projects, action.payload) }
+    case 'REORDER_PROJECTS':
+      return { ...base, projects: reorderById(base.projects, action.payload) }
+
+    case 'ADD_EXPERIENCE':
+    case 'UPDATE_EXPERIENCE':
+      return { ...base, experiences: upsertById(base.experiences, action.payload) }
+    case 'DELETE_EXPERIENCE':
+      return { ...base, experiences: removeById(base.experiences, action.payload) }
+    case 'REORDER_EXPERIENCES':
+      return { ...base, experiences: reorderById(base.experiences, action.payload) }
+
+    case 'ADD_SKILL':
+    case 'UPDATE_SKILL':
+      return { ...base, skills: upsertById(base.skills, action.payload) }
+    case 'DELETE_SKILL':
+      return { ...base, skills: removeById(base.skills, action.payload) }
+
+    case 'ADD_EDUCATION':
+    case 'UPDATE_EDUCATION':
+      return { ...base, education: upsertById(base.education, action.payload) }
+    case 'DELETE_EDUCATION':
+      return { ...base, education: removeById(base.education, action.payload) }
+
+    case 'IMPORT_DATA':
+      return action.payload
+    case 'RESET_TO_DEFAULTS':
+      return getDefaultData()
+  }
+}
+
 export interface PortfolioDataContextValue {
   data: PortfolioData
   dispatch: Dispatch<DataAction>
@@ -131,11 +199,27 @@ export function PortfolioDataProvider({ children }: { children: ReactNode }) {
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: PORTFOLIO_DATA_KEY })
 
-  // One mutation funnels every action; the cache is refreshed on success so the
-  // returned row(s) become the new source of truth without a manual merge.
+  // One mutation funnels every action. The cache is updated optimistically so
+  // the UI reflects the write immediately (no wait for the round-trip on a slow
+  // remote DB); on error we roll back to the pre-mutation snapshot, and we
+  // always invalidate on settle so the server remains the final authority.
   const mutation = useMutation({
     mutationFn: runAction,
-    onSuccess: () => invalidate(),
+    onMutate: async (action) => {
+      await queryClient.cancelQueries({ queryKey: PORTFOLIO_DATA_KEY })
+      const previous = queryClient.getQueryData<PortfolioData>(PORTFOLIO_DATA_KEY)
+      queryClient.setQueryData<PortfolioData>(
+        PORTFOLIO_DATA_KEY,
+        applyAction(previous ?? getDefaultData(), action),
+      )
+      return { previous }
+    },
+    onError: (_error, _action, context) => {
+      if (context?.previous !== undefined) {
+        queryClient.setQueryData(PORTFOLIO_DATA_KEY, context.previous)
+      }
+    },
+    onSettled: () => invalidate(),
   })
 
   // SSR / first paint shows the seed defaults (the DB may not be loaded yet),
