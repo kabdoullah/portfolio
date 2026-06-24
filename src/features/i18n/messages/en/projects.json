@@ -1,0 +1,11 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "projects_kicker": "Projects",
+  "projects_title": "Selected work",
+  "projects_subtitle": "A selection of freelance, professional and personal projects.",
+  "projects_empty": "No projects in this category.",
+  "projects_filter_all": "All",
+  "projects_card_pinned": "Pinned project",
+  "projects_card_source": "{title} source code",
+  "projects_card_view_live": "View {title} live"
+}

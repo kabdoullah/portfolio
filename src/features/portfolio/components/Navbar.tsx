@@ -11,9 +11,11 @@ import {
   SheetTrigger,
 } from '#/components/ui/sheet'
 import { ThemeToggle } from '#/components/layout/ThemeToggle'
+import { LanguageToggle } from '#/components/layout/LanguageToggle'
 import { useActiveSection } from '#/features/portfolio/hooks/useActiveSection'
 import { NAV_ITEMS, SECTION_IDS } from '#/lib/utils/constants'
 import { cn } from '#/lib/utils'
+import { m } from '#/paraglide/messages'
 
 const SECTION_LIST = NAV_ITEMS.map((item) => item.id)
 
@@ -32,7 +34,7 @@ export function Navbar() {
         <a
           href={`#${SECTION_IDS.hero}`}
           className="font-display text-xl font-extrabold tracking-tight"
-          aria-label="Retour en haut"
+          aria-label={m.nav_back_to_top()}
         >
           A<span className="text-primary">K</span>C
         </a>
@@ -47,12 +49,13 @@ export function Navbar() {
                 activeId === item.id && 'text-foreground',
               )}
             >
-              {item.label}
+              {item.label()}
             </a>
           ))}
         </div>
 
         <div className="flex items-center gap-2">
+          <LanguageToggle />
           <ThemeToggle />
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -60,14 +63,16 @@ export function Navbar() {
                 variant="ghost"
                 size="icon"
                 className="md:hidden"
-                aria-label="Ouvrir le menu"
+                aria-label={m.nav_open_menu()}
               >
                 <Menu className="size-5" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-64">
               <SheetHeader>
-                <SheetTitle className="font-display">Navigation</SheetTitle>
+                <SheetTitle className="font-display">
+                  {m.nav_menu_title()}
+                </SheetTitle>
               </SheetHeader>
               <div className="mt-4 flex flex-col gap-1 px-2">
                 {NAV_ITEMS.map((item) => (
@@ -76,7 +81,7 @@ export function Navbar() {
                       href={`#${item.id}`}
                       className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
                     >
-                      {item.label}
+                      {item.label()}
                     </a>
                   </SheetClose>
                 ))}

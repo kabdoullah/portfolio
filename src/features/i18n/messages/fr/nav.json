@@ -1,0 +1,13 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "nav_home": "Accueil",
+  "nav_about": "À propos",
+  "nav_skills": "Compétences",
+  "nav_projects": "Projets",
+  "nav_experience": "Expériences",
+  "nav_education": "Formations",
+  "nav_contact": "Contact",
+  "nav_menu_title": "Navigation",
+  "nav_back_to_top": "Retour en haut",
+  "nav_open_menu": "Ouvrir le menu"
+}

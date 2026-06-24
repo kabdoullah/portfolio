@@ -4,6 +4,7 @@ import { Badge } from '#/components/ui/badge'
 import { usePortfolioData } from '#/features/data/usePortfolioData'
 import { slideInRightVariants } from '#/lib/animations'
 import { SECTION_IDS } from '#/lib/utils/constants'
+import { m } from '#/paraglide/messages'
 import type { Experience } from '#/features/data/types'
 
 function TimelineItem({
@@ -57,7 +58,7 @@ export function ExperienceSection() {
   return (
     <section id={SECTION_IDS.experience} className="scroll-mt-20 py-24">
       <div className="mx-auto w-[min(1120px,calc(100%-2rem))]">
-        <SectionHeader kicker="Parcours" title="Expérience" />
+        <SectionHeader kicker={m.experience_kicker()} title={m.experience_title()} />
         <div className="relative mt-12 flex flex-col gap-8 before:absolute before:bottom-3 before:left-0 before:top-3 before:w-px before:bg-linear-to-b before:from-primary/40 before:via-border before:to-transparent">
           {experiences.map((experience, index) => (
             <TimelineItem

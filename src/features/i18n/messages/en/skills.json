@@ -1,0 +1,10 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "skills_kicker": "Skills",
+  "skills_title": "Tech stack",
+  "skills_subtitle": "Each row is a discipline, woven from its tools.",
+  "skills_level_expert": "expert",
+  "skills_level_advanced": "advanced",
+  "skills_level_intermediate": "intermediate",
+  "skills_level_beginner": "beginner"
+}

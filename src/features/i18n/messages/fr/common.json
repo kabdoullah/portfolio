@@ -1,0 +1,7 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "common_loading": "Chargement…",
+  "common_save": "Enregistrer",
+  "common_cancel": "Annuler",
+  "common_send": "Envoyer"
+}

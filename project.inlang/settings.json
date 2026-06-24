@@ -1,0 +1,21 @@
+{
+  "$schema": "https://inlang.com/schema/project-settings",
+  "baseLocale": "fr",
+  "locales": ["fr", "en"],
+  "modules": [
+    "https://cdn.jsdelivr.net/npm/@inlang/plugin-message-format@4.4.0/dist/index.js"
+  ],
+  "plugin.inlang.messageFormat": {
+    "pathPattern": [
+      "./src/features/i18n/messages/{locale}/common.json",
+      "./src/features/i18n/messages/{locale}/nav.json",
+      "./src/features/i18n/messages/{locale}/hero.json",
+      "./src/features/i18n/messages/{locale}/projects.json",
+      "./src/features/i18n/messages/{locale}/experience.json",
+      "./src/features/i18n/messages/{locale}/education.json",
+      "./src/features/i18n/messages/{locale}/skills.json",
+      "./src/features/i18n/messages/{locale}/contact.json",
+      "./src/features/i18n/messages/{locale}/meta.json"
+    ]
+  }
+}

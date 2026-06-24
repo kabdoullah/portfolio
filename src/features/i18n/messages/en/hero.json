@@ -1,0 +1,9 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "hero_available": "Available for projects",
+  "hero_intro": "From Java/Spring backends to Flutter mobile, I design and ship products end to end.",
+  "hero_cta_projects": "View my projects",
+  "hero_cta_cv": "Download CV",
+  "hero_cta_contact": "Get in touch",
+  "hero_scroll_down": "Scroll down"
+}

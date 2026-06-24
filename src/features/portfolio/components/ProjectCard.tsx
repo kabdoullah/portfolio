@@ -9,6 +9,7 @@ import type { MouseEvent } from 'react'
 import { ArrowUpRight, Github, Star } from 'lucide-react'
 import { Badge } from '#/components/ui/badge'
 import { staggerItemVariants } from '#/lib/animations'
+import { m } from '#/paraglide/messages'
 import type { Project } from '#/features/data/types'
 
 // Pointer tilt is intentionally subtle — a hint of depth, not a toy.
@@ -68,7 +69,7 @@ export function ProjectCard({ project }: { project: Project }) {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             {project.featured ? (
-              <Star className="size-4 fill-secondary text-secondary" aria-label="Projet épinglé" />
+              <Star className="size-4 fill-secondary text-secondary" aria-label={m.projects_card_pinned()} />
             ) : null}
             <h3 className="font-display text-lg font-bold transition-colors group-hover:text-primary">
               {project.title}
@@ -84,7 +85,7 @@ export function ProjectCard({ project }: { project: Project }) {
               href={project.githubUrl}
               target="_blank"
               rel="noreferrer"
-              aria-label={`Code source de ${project.title}`}
+              aria-label={m.projects_card_source({ title: project.title })}
               className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
             >
               <Github className="size-4" />
@@ -95,7 +96,7 @@ export function ProjectCard({ project }: { project: Project }) {
               href={project.liveUrl}
               target="_blank"
               rel="noreferrer"
-              aria-label={`Voir ${project.title} en ligne`}
+              aria-label={m.projects_card_view_live({ title: project.title })}
               className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
             >
               <ArrowUpRight className="size-4" />

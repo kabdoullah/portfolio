@@ -11,8 +11,35 @@ import { EducationSection } from '#/features/portfolio/components/EducationSecti
 import { ContactSection } from '#/features/portfolio/components/ContactSection'
 import { WeaveDivider } from '#/components/shared/WeaveDivider'
 import { usePortfolioData } from '#/features/data/usePortfolioData'
+import { m } from '#/paraglide/messages'
+import { getLocale, getUrlOrigin } from '#/paraglide/runtime'
 
-export const Route = createFileRoute('/')({ component: Home })
+export const Route = createFileRoute('/')({
+  component: Home,
+  head: () => {
+    // Resolved per request: getLocale()/getUrlOrigin() read the paraglide SSR
+    // context, m.*() the active-locale message. fr is the unprefixed canonical,
+    // en lives under /en/. x-default points at fr (the base locale).
+    const locale = getLocale()
+    const origin = getUrlOrigin()
+    const frUrl = `${origin}/`
+    const enUrl = `${origin}/en/`
+    return {
+      meta: [
+        { title: m.meta_title() },
+        { name: 'description', content: m.meta_description() },
+      ],
+      links: [
+        { rel: 'canonical', href: locale === 'en' ? enUrl : frUrl },
+        // Key must be lowercase `hreflang`: TanStack renders link attribute keys
+        // verbatim, and crawlers only recognise the lowercase HTML attribute.
+        { rel: 'alternate', hreflang: 'fr', href: frUrl },
+        { rel: 'alternate', hreflang: 'en', href: enUrl },
+        { rel: 'alternate', hreflang: 'x-default', href: frUrl },
+      ],
+    }
+  },
+})
 
 function PersonJsonLd() {
   const { data } = usePortfolioData()

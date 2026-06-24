@@ -11,6 +11,7 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import { PortfolioDataProvider } from '#/features/data/PortfolioDataContext'
 import { ThemeProvider } from '#/components/layout/ThemeProvider'
 import { Toaster } from '#/components/ui/sonner'
+import { getLocale } from '#/paraglide/runtime'
 
 import appCss from '../styles.css?url'
 
@@ -22,6 +23,9 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
+    // Per-page title/description + hreflang live in the route heads (index for the
+    // public site, admin for the dashboard) so the public SEO tags don't leak onto
+    // /admin. Only locale-agnostic, document-wide tags stay here.
     meta: [
       {
         charSet: 'utf-8',
@@ -29,14 +33,6 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {
         name: 'viewport',
         content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'Abdoulaye Kemogoha COULIBALY — Développeur Full Stack',
-      },
-      {
-        name: 'description',
-        content:
-          'Portfolio d’Abdoulaye Kemogoha COULIBALY, développeur Full Stack Java / Flutter / Python basé à Abidjan.',
       },
     ],
     links: [
@@ -54,8 +50,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  // SSR and client both derive the locale from the same URL (the /en/ prefix
+  // survives hydration), so `lang` is identical on both sides — no mismatch.
+  // A locale switch does a full navigation (see LanguageToggle), so this shell
+  // re-renders with the new lang on the next document load.
+  const locale = getLocale()
   return (
-    <html lang="fr" className="dark" suppressHydrationWarning>
+    <html lang={locale} className="dark" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>

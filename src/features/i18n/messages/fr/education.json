@@ -1,0 +1,6 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "education_kicker": "Diplômes",
+  "education_title": "Formation",
+  "education_item": "Formation {number}"
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "skills_kicker": "Compétences",
+  "skills_title": "Stack technique",
+  "skills_subtitle": "Chaque rangée est une discipline, tissée de ses outils.",
+  "skills_level_expert": "expert",
+  "skills_level_advanced": "avancé",
+  "skills_level_intermediate": "intermédiaire",
+  "skills_level_beginner": "débutant"
+}

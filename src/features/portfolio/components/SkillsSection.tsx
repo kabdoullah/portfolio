@@ -4,6 +4,7 @@ import { SectionHeader } from '#/components/shared/SectionHeader'
 import { usePortfolioData } from '#/features/data/usePortfolioData'
 import { cn } from '#/lib/utils'
 import { SECTION_IDS, SKILL_CATEGORIES } from '#/lib/utils/constants'
+import { m } from '#/paraglide/messages'
 import type { Skill } from '#/features/data/types'
 
 // Marker opacity encodes proficiency, so each thread carries level at a glance.
@@ -14,11 +15,13 @@ const LEVEL_DOT: Record<NonNullable<Skill['level']>, string> = {
   beginner: 'bg-secondary/30',
 }
 
-const LEVEL_LABEL: Record<NonNullable<Skill['level']>, string> = {
-  expert: 'expert',
-  advanced: 'avancé',
-  intermediate: 'intermédiaire',
-  beginner: 'débutant',
+// Proficiency labels are UI text (the level value itself is mono-language data),
+// so each maps to a locale-aware message getter, called at render.
+const LEVEL_LABEL: Record<NonNullable<Skill['level']>, () => string> = {
+  expert: m.skills_level_expert,
+  advanced: m.skills_level_advanced,
+  intermediate: m.skills_level_intermediate,
+  beginner: m.skills_level_beginner,
 }
 
 // Warp threads running along the band's bound edge.
@@ -63,7 +66,7 @@ function CategoryRow({ category, skills }: { category: string; skills: Skill[] }
             <motion.span
               key={skill.id}
               variants={prefersReducedMotion ? undefined : weftVariants}
-              title={`${skill.name} — ${LEVEL_LABEL[level]}`}
+              title={`${skill.name} — ${LEVEL_LABEL[level]()}`}
               className="group flex items-center gap-2 border-r border-b border-dashed border-thread/25 px-4 py-3 text-sm font-medium transition-colors hover:bg-primary/8 hover:text-primary"
             >
               <span
@@ -94,9 +97,9 @@ export function SkillsSection() {
     <section id={SECTION_IDS.skills} className="scroll-mt-20 py-24">
       <div className="mx-auto w-[min(1120px,calc(100%-2rem))]">
         <SectionHeader
-          kicker="Compétences"
-          title="Stack technique"
-          subtitle="Chaque rangée est une discipline, tissée de ses outils."
+          kicker={m.skills_kicker()}
+          title={m.skills_title()}
+          subtitle={m.skills_subtitle()}
         />
 
         <Reveal className="mt-10 overflow-hidden rounded-xl border border-thread/40 bg-card/40 backdrop-blur-sm">

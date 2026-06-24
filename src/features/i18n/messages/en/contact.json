@@ -1,0 +1,16 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "contact_kicker": "Contact",
+  "contact_title": "Let’s work together",
+  "contact_subtitle": "An idea, a project, a mission? Drop me a line.",
+  "contact_label_name": "Name",
+  "contact_label_email": "Email",
+  "contact_label_message": "Message",
+  "contact_submit": "Send",
+  "contact_submitting": "Sending…",
+  "contact_err_name": "Your name is required",
+  "contact_err_email": "Invalid email address",
+  "contact_err_message": "Your message is a bit short",
+  "contact_toast_success": "Message sent! I’ll get back to you soon.",
+  "contact_toast_error": "Sending failed. Try again in a moment."
+}

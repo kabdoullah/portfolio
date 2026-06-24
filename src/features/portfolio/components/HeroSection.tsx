@@ -5,6 +5,7 @@ import { usePortfolioData } from '#/features/data/usePortfolioData'
 import { useTypingEffect } from '#/features/portfolio/hooks/useTypingEffect'
 import { staggerContainerVariants, staggerItemVariants } from '#/lib/animations'
 import { SECTION_IDS } from '#/lib/utils/constants'
+import { m } from '#/paraglide/messages'
 
 // Warp threads that draw down on page load — the loom being strung.
 const WARP_COUNT = 7
@@ -59,7 +60,7 @@ export function HeroSection() {
           >
             <span className="size-2 animate-pulse rounded-full bg-secondary" />
             <span className="text-xs font-medium tracking-wide">
-              Disponible pour missions
+              {m.hero_available()}
             </span>
           </motion.div>
         ) : null}
@@ -89,24 +90,23 @@ export function HeroSection() {
           variants={staggerItemVariants}
           className="max-w-xl text-lg leading-relaxed text-muted-foreground text-pretty"
         >
-          Du backend Java/Spring au mobile Flutter, je conçois et livre des
-          produits de bout en bout.
+          {m.hero_intro()}
         </motion.p>
 
         <motion.div variants={staggerItemVariants} className="flex flex-wrap gap-3">
           <Button asChild size="lg">
-            <a href={`#${SECTION_IDS.projects}`}>Voir mes projets</a>
+            <a href={`#${SECTION_IDS.projects}`}>{m.hero_cta_projects()}</a>
           </Button>
           {cvUrl ? (
             <Button asChild size="lg" variant="outline">
               <a href={cvUrl} target="_blank" rel="noreferrer" download>
-                <Download className="size-4" /> Télécharger CV
+                <Download className="size-4" /> {m.hero_cta_cv()}
               </a>
             </Button>
           ) : null}
           <Button asChild size="lg" variant="outline">
             <a href={`#${SECTION_IDS.contact}`}>
-              <Mail className="size-4" /> Me contacter
+              <Mail className="size-4" /> {m.hero_cta_contact()}
             </a>
           </Button>
         </motion.div>
@@ -133,7 +133,7 @@ export function HeroSection() {
 
       <motion.a
         href={`#${SECTION_IDS.about}`}
-        aria-label="Défiler vers le bas"
+        aria-label={m.hero_scroll_down()}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted-foreground transition-colors hover:text-foreground"
         animate={{ y: [0, 8, 0] }}
         transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}

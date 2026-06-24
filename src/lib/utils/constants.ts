@@ -1,3 +1,4 @@
+import { m } from '#/paraglide/messages'
 import type { SkillCategory } from '#/features/data/types'
 
 /** In-page section anchors, also used by useActiveSection for scroll-spy. */
@@ -15,16 +16,17 @@ export type SectionId = (typeof SECTION_IDS)[keyof typeof SECTION_IDS]
 
 export interface NavItem {
   id: SectionId
-  label: string
+  /** Locale-aware label getter — call at render so it reads the active locale. */
+  label: () => string
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { id: SECTION_IDS.about, label: 'À propos' },
-  { id: SECTION_IDS.skills, label: 'Compétences' },
-  { id: SECTION_IDS.projects, label: 'Projets' },
-  { id: SECTION_IDS.experience, label: 'Expériences' },
-  { id: SECTION_IDS.education, label: 'Formations' },
-  { id: SECTION_IDS.contact, label: 'Contact' },
+  { id: SECTION_IDS.about, label: m.nav_about },
+  { id: SECTION_IDS.skills, label: m.nav_skills },
+  { id: SECTION_IDS.projects, label: m.nav_projects },
+  { id: SECTION_IDS.experience, label: m.nav_experience },
+  { id: SECTION_IDS.education, label: m.nav_education },
+  { id: SECTION_IDS.contact, label: m.nav_contact },
 ]
 
 export const SKILL_CATEGORIES: SkillCategory[] = [

@@ -11,6 +11,7 @@ import { Textarea } from '#/components/ui/textarea'
 import { usePortfolioData } from '#/features/data/usePortfolioData'
 import { createMessage } from '#/features/data/server/messages'
 import { SECTION_IDS } from '#/lib/utils/constants'
+import { m } from '#/paraglide/messages'
 
 // Default country code prepended for wa.me when the stored phone has none
 // (Abidjan, Côte d'Ivoire). wa.me wants digits only — no +, spaces, or 00 prefix.
@@ -34,15 +35,18 @@ function WhatsAppIcon({ className }: { className?: string }) {
   )
 }
 
-const contactSchema = z.object({
-  name: z.string().min(2, 'Votre nom est requis'),
-  email: z.email('Adresse email invalide'),
-  message: z.string().min(10, 'Votre message est un peu court'),
-})
-
 export function ContactSection() {
   const { data } = usePortfolioData()
   const { email, phone, github, linkedin } = data.personalInfo
+
+  // Built per render so the Zod messages resolve to the active locale. Defining
+  // it at module scope would call `m.*()` once at import and leak that locale
+  // across SSR requests.
+  const contactSchema = z.object({
+    name: z.string().min(2, m.contact_err_name()),
+    email: z.email(m.contact_err_email()),
+    message: z.string().min(10, m.contact_err_message()),
+  })
 
   const form = useForm({
     defaultValues: { name: '', email: '', message: '' },
@@ -50,10 +54,10 @@ export function ContactSection() {
     onSubmit: async ({ value, formApi }) => {
       try {
         await createMessage({ data: value })
-        toast.success('Message envoyé ! Je vous réponds rapidement.')
+        toast.success(m.contact_toast_success())
         formApi.reset()
       } catch {
-        toast.error('Échec de l’envoi. Réessayez dans un instant.')
+        toast.error(m.contact_toast_error())
       }
     },
   })
@@ -62,9 +66,9 @@ export function ContactSection() {
     <section id={SECTION_IDS.contact} className="scroll-mt-20 py-24">
       <div className="mx-auto w-[min(1120px,calc(100%-2rem))]">
         <SectionHeader
-          kicker="Contact"
-          title="Travaillons ensemble"
-          subtitle="Une idée, un projet, une mission ? Écrivez-moi."
+          kicker={m.contact_kicker()}
+          title={m.contact_title()}
+          subtitle={m.contact_subtitle()}
         />
 
         <div className="mt-12 grid gap-10 md:grid-cols-[1fr_1.4fr]">
@@ -114,7 +118,7 @@ export function ContactSection() {
               <form.Field name="name">
                 {(field) => (
                   <div className="flex flex-col gap-1.5">
-                    <Label htmlFor={field.name}>Nom</Label>
+                    <Label htmlFor={field.name}>{m.contact_label_name()}</Label>
                     <Input
                       id={field.name}
                       name={field.name}
@@ -130,7 +134,7 @@ export function ContactSection() {
               <form.Field name="email">
                 {(field) => (
                   <div className="flex flex-col gap-1.5">
-                    <Label htmlFor={field.name}>Email</Label>
+                    <Label htmlFor={field.name}>{m.contact_label_email()}</Label>
                     <Input
                       id={field.name}
                       name={field.name}
@@ -147,7 +151,7 @@ export function ContactSection() {
               <form.Field name="message">
                 {(field) => (
                   <div className="flex flex-col gap-1.5">
-                    <Label htmlFor={field.name}>Message</Label>
+                    <Label htmlFor={field.name}>{m.contact_label_message()}</Label>
                     <Textarea
                       id={field.name}
                       name={field.name}
@@ -165,7 +169,7 @@ export function ContactSection() {
                 {([canSubmit, isSubmitting]) => (
                   <Button type="submit" disabled={!canSubmit} className="w-fit">
                     <Send className="size-4" />
-                    {isSubmitting ? 'Envoi…' : 'Envoyer'}
+                    {isSubmitting ? m.contact_submitting() : m.contact_submit()}
                   </Button>
                 )}
               </form.Subscribe>

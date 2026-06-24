@@ -8,6 +8,14 @@ import { usePortfolioData } from '#/features/data/usePortfolioData'
 import { staggerContainerVariants } from '#/lib/animations'
 import { PROJECT_FILTERS, SECTION_IDS } from '#/lib/utils/constants'
 import type { ProjectFilter } from '#/lib/utils/constants'
+import { m } from '#/paraglide/messages'
+
+// Project-type filters mirror the mono-language `project.type` data, so their
+// labels stay untranslated to match the card badges; only the "all" sentinel,
+// which is UI-only, is localized.
+function filterLabel(filter: ProjectFilter): string {
+  return filter === 'Tous' ? m.projects_filter_all() : filter
+}
 
 export function ProjectsSection() {
   const { data } = usePortfolioData()
@@ -26,9 +34,9 @@ export function ProjectsSection() {
     <section id={SECTION_IDS.projects} className="scroll-mt-20 py-24">
       <div className="mx-auto w-[min(1120px,calc(100%-2rem))]">
         <SectionHeader
-          kicker="Projets"
-          title="Réalisations"
-          subtitle="Une sélection de projets freelance, professionnels et personnels."
+          kicker={m.projects_kicker()}
+          title={m.projects_title()}
+          subtitle={m.projects_subtitle()}
         />
 
         <Reveal className="mt-8 flex flex-wrap justify-center gap-2">
@@ -39,7 +47,7 @@ export function ProjectsSection() {
               variant={filter === option ? 'default' : 'outline'}
               onClick={() => setFilter(option)}
             >
-              {option}
+              {filterLabel(option)}
             </Button>
           ))}
         </Reveal>
@@ -58,7 +66,7 @@ export function ProjectsSection() {
 
         {visible.length === 0 ? (
           <p className="mt-10 text-center text-muted-foreground">
-            Aucun projet dans cette catégorie.
+            {m.projects_empty()}
           </p>
         ) : null}
       </div>
