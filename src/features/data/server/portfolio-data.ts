@@ -93,6 +93,7 @@ export const getPortfolioData = createServerFn({ method: 'GET' }).handler(
         phone: pi.phone,
         github: pi.github,
         linkedin: pi.linkedin,
+        cvUrl: pi.cvUrl,
         profilePhoto: pi.profilePhoto,
         available: pi.available,
         stats: pi.stats,

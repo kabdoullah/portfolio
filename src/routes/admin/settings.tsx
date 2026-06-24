@@ -82,6 +82,7 @@ function AdminSettings() {
         <FieldText label="Téléphone" value={draft.phone} onChange={(v) => set('phone', v)} />
         <FieldText label="GitHub" value={draft.github} onChange={(v) => set('github', v)} />
         <FieldText label="LinkedIn" value={draft.linkedin} onChange={(v) => set('linkedin', v)} />
+        <FieldText label="CV (URL)" value={draft.cvUrl} onChange={(v) => set('cvUrl', v)} />
         <div className="flex flex-col gap-1.5 sm:col-span-2">
           <Label>Bio</Label>
           <Textarea rows={4} value={draft.bio} onChange={(e) => set('bio', e.target.value)} />

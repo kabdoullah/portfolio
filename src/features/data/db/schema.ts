@@ -27,6 +27,7 @@ export const personalInfo = sqliteTable('personal_info', {
   phone: text('phone').notNull(),
   github: text('github').notNull(),
   linkedin: text('linkedin').notNull(),
+  cvUrl: text('cv_url').notNull().default(''),
   profilePhoto: text('profile_photo').notNull(),
   available: integer('available', { mode: 'boolean' }).notNull(),
   stats: text('stats', { mode: 'json' }).$type<Stat[]>().notNull(),

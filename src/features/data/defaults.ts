@@ -20,6 +20,7 @@ export function getDefaultData(): PortfolioData {
       phone: '',
       github: 'https://github.com/',
       linkedin: 'https://www.linkedin.com/',
+      cvUrl: '',
       profilePhoto: '/profile.jpg',
       available: true,
       stats: [

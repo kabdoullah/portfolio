@@ -44,6 +44,8 @@ export const personalInfoSchema = z.object({
   phone: z.string(),
   github: z.string(),
   linkedin: z.string(),
+  // Downloadable CV: a valid URL or empty. Validated before any write.
+  cvUrl: z.url().or(z.literal('')),
   profilePhoto: z.string(),
   available: z.boolean(),
   stats: z.array(statSchema),

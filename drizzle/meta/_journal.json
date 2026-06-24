@@ -15,6 +15,13 @@
       "when": 1782311581673,
       "tag": "0001_worthless_darkstar",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1782321056431,
+      "tag": "0002_great_johnny_blaze",
+      "breakpoints": true
     }
   ]
 }

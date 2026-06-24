@@ -24,6 +24,8 @@ export interface PersonalInfo {
   phone: string
   github: string
   linkedin: string
+  /** URL to a downloadable CV/résumé (external link or path under /public); '' when unset */
+  cvUrl: string
   /** base64 data URL or path under /public */
   profilePhoto: string
   available: boolean

@@ -1,0 +1,1 @@
+ALTER TABLE `personal_info` ADD `cv_url` text DEFAULT '' NOT NULL;

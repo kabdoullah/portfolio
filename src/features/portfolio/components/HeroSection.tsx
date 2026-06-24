@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowDown, Mail, MapPin } from 'lucide-react'
+import { ArrowDown, Download, Mail, MapPin } from 'lucide-react'
 import { Button } from '#/components/ui/button'
 import { usePortfolioData } from '#/features/data/usePortfolioData'
 import { useTypingEffect } from '#/features/portfolio/hooks/useTypingEffect'
@@ -11,7 +11,7 @@ const WARP_COUNT = 7
 
 export function HeroSection() {
   const { data } = usePortfolioData()
-  const { name, taglines, available, location, email } = data.personalInfo
+  const { name, taglines, available, location, email, cvUrl } = data.personalInfo
   const typed = useTypingEffect(taglines)
   const prefersReducedMotion = useReducedMotion()
 
@@ -97,6 +97,13 @@ export function HeroSection() {
           <Button asChild size="lg">
             <a href={`#${SECTION_IDS.projects}`}>Voir mes projets</a>
           </Button>
+          {cvUrl ? (
+            <Button asChild size="lg" variant="outline">
+              <a href={cvUrl} target="_blank" rel="noreferrer" download>
+                <Download className="size-4" /> Télécharger CV
+              </a>
+            </Button>
+          ) : null}
           <Button asChild size="lg" variant="outline">
             <a href={`#${SECTION_IDS.contact}`}>
               <Mail className="size-4" /> Me contacter
