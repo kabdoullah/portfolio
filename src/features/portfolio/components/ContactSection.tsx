@@ -9,6 +9,7 @@ import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
 import { Textarea } from '#/components/ui/textarea'
 import { usePortfolioData } from '#/features/data/usePortfolioData'
+import { createMessage } from '#/features/data/server/messages'
 import { SECTION_IDS } from '#/lib/utils/constants'
 
 const contactSchema = z.object({
@@ -24,10 +25,14 @@ export function ContactSection() {
   const form = useForm({
     defaultValues: { name: '', email: '', message: '' },
     validators: { onChange: contactSchema },
-    onSubmit: ({ formApi }) => {
-      // No backend: simulate a successful send and reset the form.
-      toast.success('Message envoyé ! Je vous réponds rapidement.')
-      formApi.reset()
+    onSubmit: async ({ value, formApi }) => {
+      try {
+        await createMessage({ data: value })
+        toast.success('Message envoyé ! Je vous réponds rapidement.')
+        formApi.reset()
+      } catch {
+        toast.error('Échec de l’envoi. Réessayez dans un instant.')
+      }
     },
   })
 

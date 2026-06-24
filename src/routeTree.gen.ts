@@ -15,6 +15,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminSkillsRouteImport } from './routes/admin/skills'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminProjectsRouteImport } from './routes/admin/projects'
+import { Route as AdminMessagesRouteImport } from './routes/admin/messages'
 import { Route as AdminExperiencesRouteImport } from './routes/admin/experiences'
 
 const AdminRouteRoute = AdminRouteRouteImport.update({
@@ -47,6 +48,11 @@ const AdminProjectsRoute = AdminProjectsRouteImport.update({
   path: '/projects',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminMessagesRoute = AdminMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminExperiencesRoute = AdminExperiencesRouteImport.update({
   id: '/experiences',
   path: '/experiences',
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/admin/experiences': typeof AdminExperiencesRoute
+  '/admin/messages': typeof AdminMessagesRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/skills': typeof AdminSkillsRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin/experiences': typeof AdminExperiencesRoute
+  '/admin/messages': typeof AdminMessagesRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/skills': typeof AdminSkillsRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/admin/experiences': typeof AdminExperiencesRoute
+  '/admin/messages': typeof AdminMessagesRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/skills': typeof AdminSkillsRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/admin/experiences'
+    | '/admin/messages'
     | '/admin/projects'
     | '/admin/settings'
     | '/admin/skills'
@@ -94,6 +104,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin/experiences'
+    | '/admin/messages'
     | '/admin/projects'
     | '/admin/settings'
     | '/admin/skills'
@@ -103,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/admin/experiences'
+    | '/admin/messages'
     | '/admin/projects'
     | '/admin/settings'
     | '/admin/skills'
@@ -158,6 +170,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProjectsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/messages': {
+      id: '/admin/messages'
+      path: '/messages'
+      fullPath: '/admin/messages'
+      preLoaderRoute: typeof AdminMessagesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/experiences': {
       id: '/admin/experiences'
       path: '/experiences'
@@ -170,6 +189,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteRouteChildren {
   AdminExperiencesRoute: typeof AdminExperiencesRoute
+  AdminMessagesRoute: typeof AdminMessagesRoute
   AdminProjectsRoute: typeof AdminProjectsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSkillsRoute: typeof AdminSkillsRoute
@@ -178,6 +198,7 @@ interface AdminRouteRouteChildren {
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminExperiencesRoute: AdminExperiencesRoute,
+  AdminMessagesRoute: AdminMessagesRoute,
   AdminProjectsRoute: AdminProjectsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSkillsRoute: AdminSkillsRoute,

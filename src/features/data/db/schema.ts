@@ -83,3 +83,15 @@ export const settings = sqliteTable('settings', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   lastUpdated: integer('last_updated', { mode: 'timestamp' }).notNull(),
 })
+
+// Contact-form submissions. Standalone — NOT part of `PortfolioData` (it is
+// inbound user data, not editable site content), so it has no place in the
+// portfolio seed/export/reset and never bumps `settings.lastUpdated`.
+export const messages = sqliteTable('messages', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull(),
+  message: text('message').notNull(),
+  read: integer('read', { mode: 'boolean' }).notNull().default(false),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+})

@@ -2,6 +2,7 @@ import { z } from 'zod'
 import type {
   Education,
   Experience,
+  Message,
   PersonalInfo,
   PortfolioData,
   Project,
@@ -89,6 +90,25 @@ export const educationSchema = z.object({
   description: z.string().optional(),
 })
 
+// Full Message shape (what the read layer returns). Kept aligned with the
+// `Message` interface via the Equal check below.
+export const messageSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string(),
+  message: z.string(),
+  read: z.boolean(),
+  createdAt: z.string(),
+})
+
+// Public contact-form input — the only fields a visitor supplies. The server
+// assigns id / read / createdAt. Validated before any DB write.
+export const newMessageSchema = z.object({
+  name: z.string().min(2),
+  email: z.email(),
+  message: z.string().min(10),
+})
+
 export const portfolioDataSchema = z.object({
   personalInfo: personalInfoSchema,
   skills: z.array(skillSchema),
@@ -113,5 +133,6 @@ export type SchemaTypeChecks = [
   Expect<Equal<z.infer<typeof projectSchema>, Project>>,
   Expect<Equal<z.infer<typeof experienceSchema>, Experience>>,
   Expect<Equal<z.infer<typeof educationSchema>, Education>>,
+  Expect<Equal<z.infer<typeof messageSchema>, Message>>,
   Expect<Equal<z.infer<typeof portfolioDataSchema>, PortfolioData>>,
 ]

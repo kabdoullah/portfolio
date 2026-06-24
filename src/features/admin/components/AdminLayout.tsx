@@ -1,11 +1,13 @@
 import { useRef, useState } from 'react'
 import type { ChangeEvent, ReactNode } from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
 import { motion, useReducedMotion } from 'framer-motion'
 import {
   Briefcase,
   Download,
   ExternalLink,
+  Inbox,
   LayoutDashboard,
   RotateCcw,
   Settings,
@@ -18,6 +20,8 @@ import { toast } from 'sonner'
 import { Button } from '#/components/ui/button'
 import { ConfirmDialog } from '#/features/admin/components/ConfirmDialog'
 import { usePortfolioData } from '#/features/data/usePortfolioData'
+import { getMessages } from '#/features/data/server/messages'
+import { MESSAGES_QUERY_KEY } from '#/routes/admin/messages'
 import { cn } from '#/lib/utils'
 
 const NAV = [
@@ -25,6 +29,7 @@ const NAV = [
   { to: '/admin/projects', label: 'Projets', icon: Briefcase, exact: false },
   { to: '/admin/experiences', label: 'Expériences', icon: Wrench, exact: false },
   { to: '/admin/skills', label: 'Compétences', icon: Sparkles, exact: false },
+  { to: '/admin/messages', label: 'Messages', icon: Inbox, exact: false },
   { to: '/admin/settings', label: 'Paramètres', icon: Settings, exact: false },
 ] as const satisfies ReadonlyArray<{
   to: string
@@ -43,6 +48,13 @@ export function AdminLayout({ children }: { children: ReactNode }) {
   const [confirmReset, setConfirmReset] = useState(false)
   const prefersReducedMotion = useReducedMotion()
   const { pathname } = useLocation()
+
+  // Unread badge on the Messages rail item — same cache key as the inbox page.
+  const { data: messages = [] } = useQuery({
+    queryKey: MESSAGES_QUERY_KEY,
+    queryFn: () => getMessages(),
+  })
+  const unreadCount = messages.filter((m) => !m.read).length
 
   const lastUpdated = new Date(data.lastUpdated)
   const lastUpdatedLabel = Number.isNaN(lastUpdated.getTime())
@@ -104,6 +116,11 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                   />
                   <Icon className="relative size-4" />
                   <span className="relative">{label}</span>
+                  {to === '/admin/messages' && unreadCount > 0 ? (
+                    <span className="relative ml-auto flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 font-mono text-[0.65rem] font-medium text-primary-foreground tabular-nums">
+                      {unreadCount}
+                    </span>
+                  ) : null}
                 </>
               )}
             </Link>
@@ -151,6 +168,11 @@ export function AdminLayout({ children }: { children: ReactNode }) {
             >
               <Icon className="size-4" />
               {label}
+              {to === '/admin/messages' && unreadCount > 0 ? (
+                <span className="flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 font-mono text-[0.65rem] font-medium text-primary-foreground tabular-nums">
+                  {unreadCount}
+                </span>
+              ) : null}
             </Link>
           ))}
         </nav>

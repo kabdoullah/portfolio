@@ -69,6 +69,17 @@ export interface Education {
   description?: string
 }
 
+// Contact-form submission. Standalone entity, NOT part of `PortfolioData`.
+export interface Message {
+  id: string
+  name: string
+  email: string
+  message: string
+  read: boolean
+  /** ISO timestamp of submission */
+  createdAt: string
+}
+
 export interface PortfolioData {
   personalInfo: PersonalInfo
   skills: Skill[]
