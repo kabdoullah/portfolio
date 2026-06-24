@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { Plus, Save, Trash2 } from 'lucide-react'
@@ -172,13 +172,32 @@ function FieldText({
   )
 }
 
-// Education is edited in place and dispatched immediately (it lives outside
-// personalInfo, so it isn't covered by the page's "Enregistrer" button).
+// Education is edited through a local draft and persisted on blur. The inputs
+// must NOT bind straight to the React Query cache: dispatching on every
+// keystroke triggers a full-portfolio refetch per character, which races and
+// clobbers in-progress typing on a remote (slow) DB. One write per field on
+// blur keeps typing smooth. (personalInfo above uses the same local-draft idea.)
 function EducationSection() {
   const { data, dispatch } = usePortfolioData()
+  const [drafts, setDrafts] = useState<Education[]>(data.education)
 
-  function update(item: Education, patch: Partial<Education>) {
-    dispatch({ type: 'UPDATE_EDUCATION', payload: { ...item, ...patch } })
+  // Re-sync from the server only when the SET of rows changes (add/delete),
+  // never on a field-value refetch — otherwise a refetch would clobber the
+  // field being typed. setState-during-render is React's "derive state when an
+  // input changes" pattern.
+  const serverIds = data.education.map((e) => e.id).join('|')
+  const seenIds = useRef(serverIds)
+  if (seenIds.current !== serverIds) {
+    seenIds.current = serverIds
+    setDrafts(data.education)
+  }
+
+  function setField(id: string, patch: Partial<Education>) {
+    setDrafts((prev) => prev.map((e) => (e.id === id ? { ...e, ...patch } : e)))
+  }
+
+  function persist(item: Education) {
+    dispatch({ type: 'UPDATE_EDUCATION', payload: item })
   }
 
   function add() {
@@ -191,28 +210,32 @@ function EducationSection() {
   return (
     <section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-6">
       <h2 className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-secondary before:h-px before:w-5 before:bg-secondary/50 before:content-['']">Formation</h2>
-      {data.education.map((item) => (
+      {drafts.map((item) => (
         <div key={item.id} className="flex flex-col gap-2 rounded-md border border-border p-3">
           <div className="grid gap-2 sm:grid-cols-2">
             <Input
               placeholder="Diplôme"
               value={item.degree}
-              onChange={(e) => update(item, { degree: e.target.value })}
+              onChange={(e) => setField(item.id, { degree: e.target.value })}
+              onBlur={() => persist(item)}
             />
             <Input
               placeholder="École"
               value={item.school}
-              onChange={(e) => update(item, { school: e.target.value })}
+              onChange={(e) => setField(item.id, { school: e.target.value })}
+              onBlur={() => persist(item)}
             />
             <Input
               placeholder="Période"
               value={item.period}
-              onChange={(e) => update(item, { period: e.target.value })}
+              onChange={(e) => setField(item.id, { period: e.target.value })}
+              onBlur={() => persist(item)}
             />
             <Input
               placeholder="Description (optionnel)"
               value={item.description ?? ''}
-              onChange={(e) => update(item, { description: e.target.value })}
+              onChange={(e) => setField(item.id, { description: e.target.value })}
+              onBlur={() => persist(item)}
             />
           </div>
           <Button
