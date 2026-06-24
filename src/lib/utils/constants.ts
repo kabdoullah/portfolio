@@ -22,8 +22,8 @@ export const NAV_ITEMS: NavItem[] = [
   { id: SECTION_IDS.about, label: 'À propos' },
   { id: SECTION_IDS.skills, label: 'Compétences' },
   { id: SECTION_IDS.projects, label: 'Projets' },
-  { id: SECTION_IDS.experience, label: 'Expérience' },
-  { id: SECTION_IDS.education, label: 'Formation' },
+  { id: SECTION_IDS.experience, label: 'Expériences' },
+  { id: SECTION_IDS.education, label: 'Formations' },
   { id: SECTION_IDS.contact, label: 'Contact' },
 ]
 
