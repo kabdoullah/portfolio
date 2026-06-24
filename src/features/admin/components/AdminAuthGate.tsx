@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { FormEvent, ReactNode } from 'react'
+import type { ReactNode, SyntheticEvent } from 'react'
 import { Lock } from 'lucide-react'
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
@@ -27,7 +27,7 @@ export function AdminAuthGate({ children }: { children: ReactNode }) {
     setReady(true)
   }, [])
 
-  async function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setSubmitting(true)
     try {
