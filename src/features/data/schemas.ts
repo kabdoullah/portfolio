@@ -81,7 +81,9 @@ export const experienceSchema = z.object({
 
 export const educationSchema = z.object({
   id: z.string(),
-  degree: z.string().min(1),
+  // Edited in place and persisted on each keystroke, so an empty draft must
+  // validate (the Save-on-blur pattern of personalInfo doesn't apply here).
+  degree: z.string(),
   school: z.string(),
   period: z.string(),
   description: z.string().optional(),
