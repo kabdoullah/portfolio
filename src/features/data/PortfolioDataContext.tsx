@@ -3,7 +3,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { Dispatch, ReactNode } from 'react'
 import { getDefaultData } from '#/features/data/defaults'
 import { exportDataAsJson, importDataFromJson } from '#/features/data/storage'
-import { getPortfolioData } from '#/features/data/server/portfolio-data'
+import {
+  PORTFOLIO_DATA_KEY,
+  portfolioDataQueryOptions,
+} from '#/features/data/portfolioQuery'
 import {
   createProject,
   deleteProject,
@@ -59,8 +62,6 @@ export type DataAction =
   | { type: 'DELETE_EDUCATION'; payload: string }
   | { type: 'IMPORT_DATA'; payload: PortfolioData }
   | { type: 'RESET_TO_DEFAULTS' }
-
-export const PORTFOLIO_DATA_KEY = ['portfolio-data'] as const
 
 /** Route one named action to its Server Function. Returns the write promise. */
 function runAction(action: DataAction): Promise<unknown> {
@@ -191,10 +192,7 @@ export const PortfolioDataContext =
 export function PortfolioDataProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
 
-  const query = useQuery({
-    queryKey: PORTFOLIO_DATA_KEY,
-    queryFn: () => getPortfolioData(),
-  })
+  const query = useQuery(portfolioDataQueryOptions)
 
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: PORTFOLIO_DATA_KEY })

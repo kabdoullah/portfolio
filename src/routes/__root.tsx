@@ -9,6 +9,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
 import { PortfolioDataProvider } from '#/features/data/PortfolioDataContext'
+import { portfolioDataQueryOptions } from '#/features/data/portfolioQuery'
 import { ThemeProvider } from '#/components/layout/ThemeProvider'
 import { Toaster } from '#/components/ui/sonner'
 import { getLocale } from '#/paraglide/runtime'
@@ -22,6 +23,12 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+  // Prefetch the portfolio data into the query cache during SSR so the first
+  // render uses the real DB content (and English values on /en/) rather than the
+  // seed defaults. The SSR-query integration dehydrates it for the client, so
+  // there is no French→English flash after hydration.
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(portfolioDataQueryOptions),
   head: () => ({
     // Per-page title/description + hreflang live in the route heads (index for the
     // public site, admin for the dashboard) so the public SEO tags don't leak onto
