@@ -3,11 +3,11 @@ import { GraduationCap, MapPin } from 'lucide-react'
 import { CountUp } from '#/components/shared/CountUp'
 import { Reveal } from '#/components/shared/Reveal'
 import { SectionHeader } from '#/components/shared/SectionHeader'
-import { usePortfolioData } from '#/features/data/usePortfolioData'
+import { useLocalizedPortfolioData } from '#/features/data/useLocalizedPortfolioData'
 import { SECTION_IDS } from '#/lib/utils/constants'
 
 export function AboutSection() {
-  const { data } = usePortfolioData()
+  const { data } = useLocalizedPortfolioData()
   const { personalInfo, education } = data
   const { bio, location, profilePhoto, stats, name, available } = personalInfo
 

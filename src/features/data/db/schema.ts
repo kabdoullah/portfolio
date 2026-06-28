@@ -31,6 +31,13 @@ export const personalInfo = sqliteTable('personal_info', {
   profilePhoto: text('profile_photo').notNull(),
   available: integer('available', { mode: 'boolean' }).notNull(),
   stats: text('stats', { mode: 'json' }).$type<Stat[]>().notNull(),
+  // Optional English translations (nullable → undefined in TS). When unset the
+  // public site falls back to the French value. Admin/data stay French-first.
+  titleEn: text('title_en'),
+  taglinesEn: text('taglines_en', { mode: 'json' }).$type<string[]>(),
+  bioEn: text('bio_en'),
+  locationEn: text('location_en'),
+  statsEn: text('stats_en', { mode: 'json' }).$type<Stat[]>(),
 })
 
 export const skills = sqliteTable('skills', {
@@ -56,6 +63,10 @@ export const projects = sqliteTable('projects', {
   featured: integer('featured', { mode: 'boolean' }).notNull(),
   // Maps to `Project.order` — drives dnd-kit reorder persistence.
   order: integer('order').notNull().default(0),
+  // Optional English translations; fall back to French when unset.
+  titleEn: text('title_en'),
+  descriptionEn: text('description_en'),
+  highlightsEn: text('highlights_en', { mode: 'json' }).$type<string[]>(),
 })
 
 export const experiences = sqliteTable('experiences', {
@@ -67,6 +78,9 @@ export const experiences = sqliteTable('experiences', {
   bullets: text('bullets', { mode: 'json' }).$type<string[]>().notNull(),
   // Maps to `Experience.order`.
   order: integer('order').notNull().default(0),
+  // Optional English translations; fall back to French when unset.
+  roleEn: text('role_en'),
+  bulletsEn: text('bullets_en', { mode: 'json' }).$type<string[]>(),
 })
 
 export const educationEntries = sqliteTable('education_entries', {
@@ -77,6 +91,9 @@ export const educationEntries = sqliteTable('education_entries', {
   description: text('description'),
   // Persistence-only stable order (no `order` in TS type, no admin reorder).
   position: integer('position').notNull().default(0),
+  // Optional English translations; fall back to French when unset.
+  degreeEn: text('degree_en'),
+  descriptionEn: text('description_en'),
 })
 
 /** Singleton: always a single row with id = 1. Holds `lastUpdated`. */

@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowDown, Download, Mail, MapPin } from 'lucide-react'
 import { Button } from '#/components/ui/button'
-import { usePortfolioData } from '#/features/data/usePortfolioData'
+import { useLocalizedPortfolioData } from '#/features/data/useLocalizedPortfolioData'
 import { useTypingEffect } from '#/features/portfolio/hooks/useTypingEffect'
 import { staggerContainerVariants, staggerItemVariants } from '#/lib/animations'
 import { SECTION_IDS } from '#/lib/utils/constants'
@@ -11,7 +11,7 @@ import { m } from '#/paraglide/messages'
 const WARP_COUNT = 7
 
 export function HeroSection() {
-  const { data } = usePortfolioData()
+  const { data } = useLocalizedPortfolioData()
   const { name, taglines, available, location, email, cvUrl } = data.personalInfo
   const typed = useTypingEffect(taglines)
   const prefersReducedMotion = useReducedMotion()

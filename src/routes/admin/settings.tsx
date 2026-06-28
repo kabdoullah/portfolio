@@ -39,6 +39,18 @@ function AdminSettings() {
     )
   }
 
+  // statsEn mirrors stats by index; only the label is translated (the numeric
+  // value is locale-neutral). Rebuilt from `draft.stats` so it stays aligned.
+  function updateStatEn(index: number, label: string) {
+    set(
+      'statsEn',
+      draft.stats.map((stat, i) => ({
+        value: stat.value,
+        label: i === index ? label : (draft.statsEn?.[i]?.label ?? ''),
+      })),
+    )
+  }
+
   function handleSave() {
     const parsed = personalInfoSchema.safeParse(draft)
     if (!parsed.success) {
@@ -77,7 +89,9 @@ function AdminSettings() {
       <section className="grid grid-cols-1 gap-4 rounded-xl border border-border bg-card p-6 sm:grid-cols-2">
         <FieldText label="Nom" value={draft.name} onChange={(v) => set('name', v)} />
         <FieldText label="Titre" value={draft.title} onChange={(v) => set('title', v)} />
+        <FieldText label="Titre (EN)" value={draft.titleEn ?? ''} onChange={(v) => set('titleEn', v)} />
         <FieldText label="Localisation" value={draft.location} onChange={(v) => set('location', v)} />
+        <FieldText label="Localisation (EN)" value={draft.locationEn ?? ''} onChange={(v) => set('locationEn', v)} />
         <FieldText label="Email" value={draft.email} onChange={(v) => set('email', v)} />
         <FieldText label="Téléphone" value={draft.phone} onChange={(v) => set('phone', v)} />
         <FieldText label="GitHub" value={draft.github} onChange={(v) => set('github', v)} />
@@ -86,6 +100,15 @@ function AdminSettings() {
         <div className="flex flex-col gap-1.5 sm:col-span-2">
           <Label>Bio</Label>
           <Textarea rows={4} value={draft.bio} onChange={(e) => set('bio', e.target.value)} />
+        </div>
+        <div className="flex flex-col gap-1.5 sm:col-span-2">
+          <Label>Bio (EN)</Label>
+          <Textarea
+            rows={4}
+            value={draft.bioEn ?? ''}
+            onChange={(e) => set('bioEn', e.target.value)}
+            placeholder="Laisser vide pour réutiliser le FR"
+          />
         </div>
       </section>
 
@@ -98,6 +121,12 @@ function AdminSettings() {
           onChange={(v) => set('taglines', v)}
           placeholder="Une accroche"
         />
+        <Label className="mt-2 text-muted-foreground">Accroches (EN)</Label>
+        <BulletListInput
+          value={draft.taglinesEn ?? []}
+          onChange={(v) => set('taglinesEn', v)}
+          placeholder="Laisser vide pour réutiliser le FR"
+        />
       </section>
 
       <section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-6">
@@ -109,6 +138,11 @@ function AdminSettings() {
               placeholder="Libellé"
               value={stat.label}
               onChange={(e) => updateStat(index, { label: e.target.value })}
+            />
+            <Input
+              placeholder="Libellé (EN)"
+              value={draft.statsEn?.[index]?.label ?? ''}
+              onChange={(e) => updateStatEn(index, e.target.value)}
             />
             <Input
               placeholder="Valeur"
@@ -221,6 +255,12 @@ function EducationSection() {
               onBlur={() => persist(item)}
             />
             <Input
+              placeholder="Diplôme (EN)"
+              value={item.degreeEn ?? ''}
+              onChange={(e) => setField(item.id, { degreeEn: e.target.value })}
+              onBlur={() => persist(item)}
+            />
+            <Input
               placeholder="École"
               value={item.school}
               onChange={(e) => setField(item.id, { school: e.target.value })}
@@ -236,6 +276,12 @@ function EducationSection() {
               placeholder="Description (optionnel)"
               value={item.description ?? ''}
               onChange={(e) => setField(item.id, { description: e.target.value })}
+              onBlur={() => persist(item)}
+            />
+            <Input
+              placeholder="Description EN (optionnel)"
+              value={item.descriptionEn ?? ''}
+              onChange={(e) => setField(item.id, { descriptionEn: e.target.value })}
               onBlur={() => persist(item)}
             />
           </div>

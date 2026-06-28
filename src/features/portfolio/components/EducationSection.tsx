@@ -1,7 +1,7 @@
 import { GraduationCap } from 'lucide-react'
 import { Reveal } from '#/components/shared/Reveal'
 import { SectionHeader } from '#/components/shared/SectionHeader'
-import { usePortfolioData } from '#/features/data/usePortfolioData'
+import { useLocalizedPortfolioData } from '#/features/data/useLocalizedPortfolioData'
 import { slideInRightVariants } from '#/lib/animations'
 import { SECTION_IDS } from '#/lib/utils/constants'
 import { m } from '#/paraglide/messages'
@@ -30,7 +30,7 @@ function TimelineItem({ education, index }: { education: Education; index: numbe
 }
 
 export function EducationSection() {
-  const { data } = usePortfolioData()
+  const { data } = useLocalizedPortfolioData()
   // Education arrives already ordered by the data layer (DB `position`), so it
   // is rendered as-is — there is no `order` field on the Education type.
   const { education } = data

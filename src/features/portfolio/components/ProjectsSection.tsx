@@ -4,7 +4,7 @@ import { ProjectCard } from '#/features/portfolio/components/ProjectCard'
 import { Reveal } from '#/components/shared/Reveal'
 import { SectionHeader } from '#/components/shared/SectionHeader'
 import { Button } from '#/components/ui/button'
-import { usePortfolioData } from '#/features/data/usePortfolioData'
+import { useLocalizedPortfolioData } from '#/features/data/useLocalizedPortfolioData'
 import { staggerContainerVariants } from '#/lib/animations'
 import { PROJECT_FILTERS, SECTION_IDS } from '#/lib/utils/constants'
 import type { ProjectFilter } from '#/lib/utils/constants'
@@ -18,7 +18,7 @@ function filterLabel(filter: ProjectFilter): string {
 }
 
 export function ProjectsSection() {
-  const { data } = usePortfolioData()
+  const { data } = useLocalizedPortfolioData()
   const [filter, setFilter] = useState<ProjectFilter>('Tous')
 
   // Featured first, then by explicit order.

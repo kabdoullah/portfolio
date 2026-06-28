@@ -10,7 +10,7 @@ import { ExperienceSection } from '#/features/portfolio/components/ExperienceSec
 import { EducationSection } from '#/features/portfolio/components/EducationSection'
 import { ContactSection } from '#/features/portfolio/components/ContactSection'
 import { WeaveDivider } from '#/components/shared/WeaveDivider'
-import { usePortfolioData } from '#/features/data/usePortfolioData'
+import { useLocalizedPortfolioData } from '#/features/data/useLocalizedPortfolioData'
 import { m } from '#/paraglide/messages'
 import { getLocale, getUrlOrigin } from '#/paraglide/runtime'
 
@@ -42,7 +42,7 @@ export const Route = createFileRoute('/')({
 })
 
 function PersonJsonLd() {
-  const { data } = usePortfolioData()
+  const { data } = useLocalizedPortfolioData()
   const { name, title, email, location, github, linkedin } = data.personalInfo
   const jsonLd = {
     '@context': 'https://schema.org',

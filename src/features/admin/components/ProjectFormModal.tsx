@@ -94,6 +94,13 @@ export function ProjectFormModal({
           <Field label="Titre">
             <Input value={draft.title} onChange={(e) => set('title', e.target.value)} />
           </Field>
+          <Field label="Titre (EN)">
+            <Input
+              value={draft.titleEn ?? ''}
+              onChange={(e) => set('titleEn', e.target.value)}
+              placeholder="Laisser vide pour réutiliser le FR"
+            />
+          </Field>
 
           <div className="grid grid-cols-2 gap-3">
             <Field label="Type">
@@ -122,6 +129,14 @@ export function ProjectFormModal({
               onChange={(e) => set('description', e.target.value)}
             />
           </Field>
+          <Field label="Description (EN)">
+            <Textarea
+              rows={3}
+              value={draft.descriptionEn ?? ''}
+              onChange={(e) => set('descriptionEn', e.target.value)}
+              placeholder="Laisser vide pour réutiliser le FR"
+            />
+          </Field>
 
           <div className="grid grid-cols-2 gap-3">
             <Field label="URL en ligne">
@@ -141,6 +156,13 @@ export function ProjectFormModal({
               value={draft.highlights}
               onChange={(v) => set('highlights', v)}
               placeholder="Un point fort du projet"
+            />
+          </Field>
+          <Field label="Points clés (EN)">
+            <BulletListInput
+              value={draft.highlightsEn ?? []}
+              onChange={(v) => set('highlightsEn', v)}
+              placeholder="Laisser vide pour réutiliser le FR"
             />
           </Field>
 

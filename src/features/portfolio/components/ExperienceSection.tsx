@@ -1,7 +1,7 @@
 import { Reveal } from '#/components/shared/Reveal'
 import { SectionHeader } from '#/components/shared/SectionHeader'
 import { Badge } from '#/components/ui/badge'
-import { usePortfolioData } from '#/features/data/usePortfolioData'
+import { useLocalizedPortfolioData } from '#/features/data/useLocalizedPortfolioData'
 import { slideInRightVariants } from '#/lib/animations'
 import { SECTION_IDS } from '#/lib/utils/constants'
 import { m } from '#/paraglide/messages'
@@ -50,7 +50,7 @@ function TimelineItem({
 }
 
 export function ExperienceSection() {
-  const { data } = usePortfolioData()
+  const { data } = useLocalizedPortfolioData()
   const experiences = [...data.experiences].sort((a, b) => a.order - b.order)
 
   if (experiences.length === 0) return null

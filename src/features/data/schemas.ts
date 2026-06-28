@@ -49,6 +49,12 @@ export const personalInfoSchema = z.object({
   profilePhoto: z.string(),
   available: z.boolean(),
   stats: z.array(statSchema),
+  // Optional English translations (fall back to French when unset).
+  titleEn: z.string().optional(),
+  taglinesEn: z.array(z.string()).optional(),
+  bioEn: z.string().optional(),
+  locationEn: z.string().optional(),
+  statsEn: z.array(statSchema).optional(),
 })
 
 export const skillSchema = z.object({
@@ -70,6 +76,10 @@ export const projectSchema = z.object({
   highlights: z.array(z.string()),
   featured: z.boolean(),
   order: z.number().int(),
+  // Optional English translations (fall back to French when unset).
+  titleEn: z.string().optional(),
+  descriptionEn: z.string().optional(),
+  highlightsEn: z.array(z.string()).optional(),
 })
 
 export const experienceSchema = z.object({
@@ -80,6 +90,9 @@ export const experienceSchema = z.object({
   stack: z.array(z.string()),
   bullets: z.array(z.string()),
   order: z.number().int(),
+  // Optional English translations (fall back to French when unset).
+  roleEn: z.string().optional(),
+  bulletsEn: z.array(z.string()).optional(),
 })
 
 export const educationSchema = z.object({
@@ -90,6 +103,9 @@ export const educationSchema = z.object({
   school: z.string(),
   period: z.string(),
   description: z.string().optional(),
+  // Optional English translations (fall back to French when unset).
+  degreeEn: z.string().optional(),
+  descriptionEn: z.string().optional(),
 })
 
 // Full Message shape (what the read layer returns). Kept aligned with the

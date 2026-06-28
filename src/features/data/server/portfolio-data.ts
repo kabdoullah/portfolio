@@ -62,6 +62,9 @@ export const getPortfolioData = createServerFn({ method: 'GET' }).handler(
       highlights: p.highlights,
       featured: p.featured,
       order: p.order,
+      titleEn: nullToUndefined(p.titleEn),
+      descriptionEn: nullToUndefined(p.descriptionEn),
+      highlightsEn: nullToUndefined(p.highlightsEn),
     }))
 
     const experienceList: Experience[] = experienceRows.map((e) => ({
@@ -72,6 +75,8 @@ export const getPortfolioData = createServerFn({ method: 'GET' }).handler(
       stack: e.stack,
       bullets: e.bullets,
       order: e.order,
+      roleEn: nullToUndefined(e.roleEn),
+      bulletsEn: nullToUndefined(e.bulletsEn),
     }))
 
     const educationList: Education[] = educationRows.map((e) => ({
@@ -80,6 +85,8 @@ export const getPortfolioData = createServerFn({ method: 'GET' }).handler(
       school: e.school,
       period: e.period,
       description: nullToUndefined(e.description),
+      degreeEn: nullToUndefined(e.degreeEn),
+      descriptionEn: nullToUndefined(e.descriptionEn),
     }))
 
     return {
@@ -97,6 +104,11 @@ export const getPortfolioData = createServerFn({ method: 'GET' }).handler(
         profilePhoto: pi.profilePhoto,
         available: pi.available,
         stats: pi.stats,
+        titleEn: nullToUndefined(pi.titleEn),
+        taglinesEn: nullToUndefined(pi.taglinesEn),
+        bioEn: nullToUndefined(pi.bioEn),
+        locationEn: nullToUndefined(pi.locationEn),
+        statsEn: nullToUndefined(pi.statsEn),
       },
       skills: skillList,
       projects: projectList,

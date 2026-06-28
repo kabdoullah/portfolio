@@ -30,6 +30,13 @@ export interface PersonalInfo {
   profilePhoto: string
   available: boolean
   stats: Stat[]
+  // Optional English translations. When unset/empty the public site falls back
+  // to the French field above. Names/contact/URLs are not translated.
+  titleEn?: string
+  taglinesEn?: string[]
+  bioEn?: string
+  locationEn?: string
+  statsEn?: Stat[]
 }
 
 export interface Skill {
@@ -51,6 +58,11 @@ export interface Project {
   highlights: string[]
   featured: boolean
   order: number
+  // Optional English translations; fall back to French when unset. `stack`,
+  // `type`, `year` and URLs are not translated.
+  titleEn?: string
+  descriptionEn?: string
+  highlightsEn?: string[]
 }
 
 export interface Experience {
@@ -61,6 +73,10 @@ export interface Experience {
   stack: string[]
   bullets: string[]
   order: number
+  // Optional English translations; fall back to French when unset. `company`
+  // (proper noun), `period` and `stack` are not translated.
+  roleEn?: string
+  bulletsEn?: string[]
 }
 
 export interface Education {
@@ -69,6 +85,10 @@ export interface Education {
   school: string
   period: string
   description?: string
+  // Optional English translations; fall back to French when unset. `school`
+  // (proper noun) and `period` are not translated.
+  degreeEn?: string
+  descriptionEn?: string
 }
 
 // Contact-form submission. Standalone entity, NOT part of `PortfolioData`.

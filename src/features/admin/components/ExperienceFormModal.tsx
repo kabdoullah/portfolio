@@ -90,6 +90,15 @@ export function ExperienceFormModal({
           </div>
 
           <div className="flex flex-col gap-1.5">
+            <Label>Poste (EN)</Label>
+            <Input
+              value={draft.roleEn ?? ''}
+              onChange={(e) => set('roleEn', e.target.value)}
+              placeholder="Laisser vide pour réutiliser le FR"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
             <Label>Période</Label>
             <Input
               value={draft.period}
@@ -109,6 +118,15 @@ export function ExperienceFormModal({
               value={draft.bullets}
               onChange={(v) => set('bullets', v)}
               placeholder="Une réalisation"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label>Missions / réalisations (EN)</Label>
+            <BulletListInput
+              value={draft.bulletsEn ?? []}
+              onChange={(v) => set('bulletsEn', v)}
+              placeholder="Laisser vide pour réutiliser le FR"
             />
           </div>
         </div>
