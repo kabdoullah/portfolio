@@ -123,30 +123,26 @@ export function convertSqliteTables(tables: SqliteTables): {
       descriptionEn: optStr(row, 'description_en'),
       highlightsEn: optJson(row, 'highlights_en'),
     })),
-    experiences: [...tables.experiences]
-      .sort(byColumn('order'))
-      .map((row) => ({
-        id: str(row, 'id'),
-        role: str(row, 'role'),
-        company: str(row, 'company'),
-        period: str(row, 'period'),
-        stack: json(row, 'stack'),
-        bullets: json(row, 'bullets'),
-        order: num(row, 'order'),
-        roleEn: optStr(row, 'role_en'),
-        bulletsEn: optJson(row, 'bullets_en'),
-      })),
-    education: [...tables.education]
-      .sort(byColumn('position'))
-      .map((row) => ({
-        id: str(row, 'id'),
-        degree: str(row, 'degree'),
-        school: str(row, 'school'),
-        period: str(row, 'period'),
-        description: optStr(row, 'description'),
-        degreeEn: optStr(row, 'degree_en'),
-        descriptionEn: optStr(row, 'description_en'),
-      })),
+    experiences: [...tables.experiences].sort(byColumn('order')).map((row) => ({
+      id: str(row, 'id'),
+      role: str(row, 'role'),
+      company: str(row, 'company'),
+      period: str(row, 'period'),
+      stack: json(row, 'stack'),
+      bullets: json(row, 'bullets'),
+      order: num(row, 'order'),
+      roleEn: optStr(row, 'role_en'),
+      bulletsEn: optJson(row, 'bullets_en'),
+    })),
+    education: [...tables.education].sort(byColumn('position')).map((row) => ({
+      id: str(row, 'id'),
+      degree: str(row, 'degree'),
+      school: str(row, 'school'),
+      period: str(row, 'period'),
+      description: optStr(row, 'description'),
+      degreeEn: optStr(row, 'degree_en'),
+      descriptionEn: optStr(row, 'description_en'),
+    })),
     // Same fallback as the read layer (server/portfolio-data.ts).
     lastUpdated: stng
       ? isoFromSeconds(stng, 'last_updated')
