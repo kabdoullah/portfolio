@@ -1,0 +1,25 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Native Node runtime (no Docker). Env vars marked `sync: false` are entered in
+# the Render dashboard on first creation and are never committed.
+services:
+  - type: web
+    name: portfolio
+    runtime: node
+    plan: free
+    # Same AWS region as the Neon project (us-east-2): every SSR render queries
+    # the database, so co-locating keeps that round-trip short.
+    region: ohio
+    branch: main
+    autoDeployTrigger: commit
+    # pnpm pinned to the version that wrote pnpm-lock.yaml, via npx — NOT
+    # corepack, whose shim crashed with pnpm 11 on the previous host.
+    buildCommand: npx pnpm@11.18.0 install --frozen-lockfile && npx pnpm@11.18.0 build
+    # `start` = migrate-on-start (seed only on an empty DB) then `vite preview`
+    # on $PORT. It only needs tsx/vite from node_modules, so plain npm runs it.
+    startCommand: npm run start
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

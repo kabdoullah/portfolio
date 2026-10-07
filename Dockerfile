@@ -1,12 +1,11 @@
-# Railway build. We control the toolchain explicitly instead of relying on
-# Nixpacks + corepack: corepack's shim crashes running pnpm 11.1.2
-# (ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING), and the Nixpacks default pnpm is too
-# old to read pnpm-workspace.yaml / the pnpm-11 lockfile. Installing pnpm 11.1.2
-# directly with npm mirrors the local, tested toolchain.
+# FALLBACK ONLY. Render deploys with its native Node runtime (render.yaml). Keep
+# this file until the first native deploy is verified; if pnpm setup fails there,
+# set `runtime: docker` in render.yaml. pnpm is installed with npm, not corepack
+# (corepack's shim crashes with pnpm 11).
 FROM node:22-slim
 
-# pnpm 11.1.2 standalone (NOT via corepack).
-RUN npm install -g pnpm@11.1.2
+# pnpm 11.18.0 standalone, NOT via corepack — the version that wrote pnpm-lock.yaml.
+RUN npm install -g pnpm@11.18.0
 
 WORKDIR /app
 
@@ -18,6 +17,6 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm build
 
-# Railway injects PORT at runtime; `start` runs migrate-on-start then serves.
+# The platform injects PORT at runtime; `start` runs migrate-on-start then serves.
 EXPOSE 3000
 CMD ["pnpm", "start"]
