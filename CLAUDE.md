@@ -81,9 +81,10 @@ place that compose several features.
 
 ### pnpm gotcha (already fixed, don't undo)
 
-`pnpm-workspace.yaml` sets `verifyDepsBeforeRun: false` and lists `unrs-resolver` under
-`onlyBuiltDependencies`. Without this, pnpm's ignored-build guard makes every `pnpm <script>` exit
-non-zero (it also silently aborts `shadcn add`). If you hit `ERR_PNPM_IGNORED_BUILDS`, remove
+`pnpm-workspace.yaml` sets `dangerouslyAllowAllBuilds: true` and `verifyDepsBeforeRun: false`
+(pnpm 11 no longer reads a `"pnpm"` field in `package.json` — don't add one back). Without this,
+pnpm's ignored-build guard makes `pnpm install` / every `pnpm <script>` exit non-zero (it also
+silently aborts `shadcn add`). If you hit `ERR_PNPM_IGNORED_BUILDS`, remove
 `node_modules/.modules.yaml` and re-run `pnpm install` rather than reverting the config.
 
 ## Architecture — the parts that matter
