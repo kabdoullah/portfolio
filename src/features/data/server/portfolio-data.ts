@@ -59,6 +59,7 @@ export const getPortfolioData = createServerFn({ method: 'GET' }).handler(
       year: p.year,
       liveUrl: nullToUndefined(p.liveUrl),
       githubUrl: nullToUndefined(p.githubUrl),
+      image: nullToUndefined(p.image),
       highlights: p.highlights,
       featured: p.featured,
       order: p.order,

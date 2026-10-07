@@ -58,7 +58,9 @@ export function ProjectFormModal({
   nextOrder,
 }: ProjectFormModalProps) {
   const { dispatch } = usePortfolioData()
-  const [draft, setDraft] = useState<Project>(project ?? emptyProject(nextOrder))
+  const [draft, setDraft] = useState<Project>(
+    project ?? emptyProject(nextOrder),
+  )
 
   // Reset the form whenever the dialog opens for a different item.
   useEffect(() => {
@@ -87,12 +89,17 @@ export function ProjectFormModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90svh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{project ? 'Modifier le projet' : 'Nouveau projet'}</DialogTitle>
+          <DialogTitle>
+            {project ? 'Modifier le projet' : 'Nouveau projet'}
+          </DialogTitle>
         </DialogHeader>
 
         <div className="flex flex-col gap-4">
           <Field label="Titre">
-            <Input value={draft.title} onChange={(e) => set('title', e.target.value)} />
+            <Input
+              value={draft.title}
+              onChange={(e) => set('title', e.target.value)}
+            />
           </Field>
           <Field label="Titre (EN)">
             <Input
@@ -104,7 +111,10 @@ export function ProjectFormModal({
 
           <div className="grid grid-cols-2 gap-3">
             <Field label="Type">
-              <Select value={draft.type} onValueChange={(v) => set('type', v as ProjectType)}>
+              <Select
+                value={draft.type}
+                onValueChange={(v) => set('type', v as ProjectType)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -118,7 +128,10 @@ export function ProjectFormModal({
               </Select>
             </Field>
             <Field label="Année">
-              <Input value={draft.year} onChange={(e) => set('year', e.target.value)} />
+              <Input
+                value={draft.year}
+                onChange={(e) => set('year', e.target.value)}
+              />
             </Field>
           </div>
 
@@ -140,15 +153,33 @@ export function ProjectFormModal({
 
           <div className="grid grid-cols-2 gap-3">
             <Field label="URL en ligne">
-              <Input value={draft.liveUrl ?? ''} onChange={(e) => set('liveUrl', e.target.value)} />
+              <Input
+                value={draft.liveUrl ?? ''}
+                onChange={(e) => set('liveUrl', e.target.value)}
+              />
             </Field>
             <Field label="URL GitHub">
-              <Input value={draft.githubUrl ?? ''} onChange={(e) => set('githubUrl', e.target.value)} />
+              <Input
+                value={draft.githubUrl ?? ''}
+                onChange={(e) => set('githubUrl', e.target.value)}
+              />
             </Field>
           </div>
 
+          <Field label="Image (chemin /public ou URL)">
+            <Input
+              value={draft.image ?? ''}
+              onChange={(e) => set('image', e.target.value)}
+              placeholder="/projects/mon-projet.png"
+            />
+          </Field>
+
           <Field label="Stack technique">
-            <TagInput value={draft.stack} onChange={(v) => set('stack', v)} placeholder="Java, React…" />
+            <TagInput
+              value={draft.stack}
+              onChange={(v) => set('stack', v)}
+              placeholder="Java, React…"
+            />
           </Field>
 
           <Field label="Points clés">
@@ -168,7 +199,10 @@ export function ProjectFormModal({
 
           <label className="flex items-center justify-between rounded-lg border border-border p-3">
             <span className="text-sm font-medium">Épingler en avant</span>
-            <Switch checked={draft.featured} onCheckedChange={(v) => set('featured', v)} />
+            <Switch
+              checked={draft.featured}
+              onCheckedChange={(v) => set('featured', v)}
+            />
           </label>
         </div>
 
@@ -183,7 +217,13 @@ export function ProjectFormModal({
   )
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  children,
+}: {
+  label: string
+  children: React.ReactNode
+}) {
   return (
     <div className="flex flex-col gap-1.5">
       <Label>{label}</Label>

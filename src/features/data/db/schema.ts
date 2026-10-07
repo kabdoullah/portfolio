@@ -66,6 +66,7 @@ export const projects = pgTable('projects', {
   year: text('year').notNull(),
   liveUrl: text('live_url'),
   githubUrl: text('github_url'),
+  image: text('image'),
   highlights: jsonb('highlights').$type<string[]>().notNull(),
   featured: boolean('featured').notNull(),
   // Maps to `Project.order` — drives dnd-kit reorder persistence.

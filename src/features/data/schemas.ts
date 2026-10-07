@@ -27,7 +27,11 @@ export const skillLevelSchema = z.enum([
   'expert',
 ])
 
-export const projectTypeSchema = z.enum(['Freelance', 'Entreprise', 'Personnel'])
+export const projectTypeSchema = z.enum([
+  'Freelance',
+  'Entreprise',
+  'Personnel',
+])
 
 export const statSchema = z.object({
   label: z.string(),
@@ -73,6 +77,7 @@ export const projectSchema = z.object({
   year: z.string(),
   liveUrl: z.url().optional().or(z.literal('')),
   githubUrl: z.url().optional().or(z.literal('')),
+  image: z.string().optional(),
   highlights: z.array(z.string()),
   featured: z.boolean(),
   order: z.number().int(),

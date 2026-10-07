@@ -1,9 +1,5 @@
 export type SkillCategory =
-  | 'Backend'
-  | 'Mobile'
-  | 'Frontend'
-  | 'DevOps'
-  | 'IA/Data'
+  'Backend' | 'Mobile' | 'Frontend' | 'DevOps' | 'IA/Data'
 
 export type SkillLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert'
 
@@ -55,6 +51,8 @@ export interface Project {
   year: string
   liveUrl?: string
   githubUrl?: string
+  /** Cover image: path under /public or absolute URL; '' or unset when none */
+  image?: string
   highlights: string[]
   featured: boolean
   order: number

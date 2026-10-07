@@ -65,11 +65,24 @@ export function ProjectCard({ project }: { project: Project }) {
           WebkitMaskImage: 'linear-gradient(to bottom, black, transparent 72%)',
         }}
       />
+      {project.image ? (
+        <img
+          src={project.image}
+          alt={project.title}
+          loading="lazy"
+          decoding="async"
+          className="-mx-6 -mt-6 aspect-[2/1] w-[calc(100%+3rem)] max-w-none border-b border-border object-cover"
+        />
+      ) : null}
+
       <header className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             {project.featured ? (
-              <Star className="size-4 fill-secondary text-secondary" aria-label={m.projects_card_pinned()} />
+              <Star
+                className="size-4 fill-secondary text-secondary"
+                aria-label={m.projects_card_pinned()}
+              />
             ) : null}
             <h3 className="font-display text-lg font-bold transition-colors group-hover:text-primary">
               {project.title}
@@ -111,7 +124,10 @@ export function ProjectCard({ project }: { project: Project }) {
         <ul className="flex flex-col gap-1.5 text-sm">
           {project.highlights.map((highlight) => (
             <li key={highlight} className="flex items-start gap-2">
-              <span className="mt-1.5 size-1 shrink-0 rounded-full bg-primary" aria-hidden />
+              <span
+                className="mt-1.5 size-1 shrink-0 rounded-full bg-primary"
+                aria-hidden
+              />
               {highlight}
             </li>
           ))}
