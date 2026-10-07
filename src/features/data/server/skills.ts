@@ -8,7 +8,7 @@ import { touchLastUpdated } from '#/features/data/server/last-updated'
 
 /** Next display position = current count (append to the end). */
 async function nextPosition(): Promise<number> {
-  const [row] = await db.select({ count: sql<number>`count(*)` }).from(skills)
+  const [row] = await db.select({ count: sql<number>`count(*)`.mapWith(Number) }).from(skills)
   return row.count
 }
 

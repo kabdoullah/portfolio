@@ -25,19 +25,30 @@ survives redeploys.
 
 ## 2. Move production data from Railway (one time)
 
-1. Make a consistent copy of the SQLite file inside the Railway service
-   (`VACUUM INTO` also captures pages still in the WAL file):
+1. Inside the Railway service (`railway ssh`, interactive), make a consistent
+   copy (`VACUUM INTO` also captures pages still in the WAL file), print its
+   checksum and the row count of every table:
    ```bash
-   railway ssh -- node -e "new (require('node:sqlite').DatabaseSync)('/data/portfolio.db').exec(\"VACUUM INTO '/tmp/export.db'\")"
-   railway ssh -- base64 /tmp/export.db | base64 --decode > portfolio-prod.db
+   node -e "const {DatabaseSync}=require('node:sqlite'); const d=new DatabaseSync('/data/portfolio.db'); d.exec(\"VACUUM INTO '/tmp/export.db'\"); for (const t of ['personal_info','skills','projects','experiences','education_entries','settings','messages']) console.log(t, d.prepare('select count(*) n from '+t).get().n)"
+   sha256sum /tmp/export.db
    ```
-   If `railway ssh -- <cmd>` is not available in your CLI version, open
-   `railway ssh` interactively, run the same commands, and copy the base64 output.
-2. Check it opens:
-   `node -e "console.log(new (require('node:sqlite').DatabaseSync)('portfolio-prod.db').prepare('select count(*) n from projects').get())"`
-3. Rehearse on the dev branch: `pnpm db:transfer ./portfolio-prod.db --force`,
+   Note the counts and the checksum.
+2. Download it. `tr -d '\r'` strips carriage returns a terminal may add:
+   ```bash
+   railway ssh -- base64 /tmp/export.db | tr -d '\r' | base64 --decode > portfolio-prod.db
+   ```
+   If that one-liner does not work with your CLI version, run `base64 /tmp/export.db`
+   in the interactive session, paste the output into `export.b64` locally, then
+   `tr -d '\r' < export.b64 | base64 --decode > portfolio-prod.db`.
+3. **Verify before going further** — all three must hold, otherwise download again:
+   ```bash
+   shasum -a 256 portfolio-prod.db        # must equal the Railway checksum
+   node -e "const {DatabaseSync}=require('node:sqlite'); const d=new DatabaseSync('portfolio-prod.db',{readOnly:true}); console.log(d.prepare('pragma integrity_check').get()); for (const t of ['personal_info','skills','projects','experiences','education_entries','settings','messages']) console.log(t, d.prepare('select count(*) n from '+t).get().n)"
+   ```
+   `integrity_check` must print `ok`, and every count must equal the Railway counts.
+4. Rehearse on the dev branch: `pnpm db:transfer ./portfolio-prod.db --force`,
    then check `pnpm dev`.
-4. Production (an inline `DATABASE_URL` wins over `.env.local`):
+5. Production (an inline `DATABASE_URL` wins over `.env.local`):
    ```bash
    DATABASE_URL='<main direct URL>' pnpm db:migrate
    DATABASE_URL='<main direct URL>' pnpm db:transfer ./portfolio-prod.db
@@ -45,7 +56,8 @@ survives redeploys.
    The script validates everything before writing and refuses to overwrite a
    non-empty database unless `--force` is passed. Re-running with `--force` is
    safe: content is replaced, already-copied messages are skipped.
-5. Delete `portfolio-prod.db` once the cutover is verified (it holds visitors'
+6. Compare the counts printed by `db:transfer` with the Railway counts, then delete
+   `portfolio-prod.db` and `export.b64` once the cutover is verified (they hold visitors'
    contact messages).
 
 ## 3. Render
