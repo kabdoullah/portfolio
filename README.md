@@ -1,213 +1,95 @@
-Welcome to your new TanStack Start app! 
+# Portfolio — Abdoulaye Kemogoha COULIBALY
 
-# Getting Started
+Portfolio personnel (développeur Full Stack, Abidjan) : un site public d'une page, bilingue
+**FR/EN**, et un **tableau de bord `/admin`** qui permet de modifier tout le contenu du site
+(projets, expériences, compétences, formation, infos personnelles) et de lire les messages du
+formulaire de contact. Le contenu est stocké dans **Neon (Postgres)** ; le site est déployé sur
+**Render**.
 
-To run this application:
+## Stack
+
+- **React 19** + **TanStack Start** (SSR, Server Functions) + **Vite 8**, routage par fichiers
+- **TanStack Query** (cache côté client), **TanStack Form** + **Zod v4**
+- **Drizzle ORM** + **postgres.js** sur **Neon**
+- **Tailwind CSS v4** + **shadcn/ui**, **Framer Motion**, **@dnd-kit** (réordonnancement admin)
+- **Paraglide JS** pour l'i18n (FR par défaut, EN sous `/en/`)
+- **TypeScript strict**, **Vitest**, ESLint + Prettier
+- **React Compiler** activé
+
+## Prérequis
+
+- **Node 22** (voir `.nvmrc`)
+- **pnpm 11** — npm et yarn ne respectent pas la configuration `pnpm-workspace.yaml`
+- Une base **Neon** : une branche `dev` pour le développement local
+
+## Démarrage
 
 ```bash
 pnpm install
-pnpm dev
+cp .env.local.example .env.local
 ```
 
-# Building For Production
+Renseigner `.env.local` :
 
-To build this application for production:
+| Variable         | Rôle                                                                                                     |
+| ---------------- | -------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`   | **Obligatoire.** Chaîne de connexion **directe** de la branche Neon `dev` (hôte sans `-pooler`).         |
+| `ADMIN_PASSWORD` | Mot de passe de `/admin`, vérifié côté serveur (`admin2025` par défaut). Ne pas le préfixer par `VITE_`. |
+
+Puis créer le schéma, insérer le contenu par défaut et lancer le serveur :
 
 ```bash
-pnpm build
+pnpm db:migrate
+pnpm db:seed
+pnpm dev          # http://localhost:3000
 ```
 
-## Testing
+## Scripts
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+| Commande                                   | Rôle                                                                                                                |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `pnpm dev`                                 | Serveur de développement (port 3000)                                                                                |
+| `pnpm build` / `pnpm preview`              | Build de production (client + SSR) / le servir                                                                      |
+| `pnpm start`                               | Entrée de production : applique les migrations (seed seulement si la base est vide), puis sert le build sur `$PORT` |
+| `pnpm test`                                | Tests Vitest (`pnpm exec vitest run <chemin>` pour un seul fichier)                                                 |
+| `pnpm lint` / `pnpm format` / `pnpm check` | ESLint / Prettier + ESLint --fix / vérification Prettier                                                            |
+| `pnpm db:generate`                         | Génère une migration Drizzle dans `drizzle/` à partir de `src/features/data/db/schema.ts`                           |
+| `pnpm db:migrate` / `pnpm db:push`         | Applique les migrations / pousse le schéma directement (dev)                                                        |
+| `pnpm db:seed` / `pnpm db:setup`           | Insère le contenu par défaut / `db:push` + `db:seed`                                                                |
+| `pnpm db:transfer <fichier.db> [--force]`  | Copie ponctuelle de l'ancienne base SQLite (Railway) vers Neon — voir `DEPLOY.md`                                   |
 
-```bash
-pnpm test
+Ajouter un composant shadcn : `pnpm dlx shadcn@latest add <composant>`.
+
+## Organisation
+
+```
+src/
+├── features/
+│   ├── data/        # types, schémas Zod, seed, accès BD (db/) et Server Functions (server/)
+│   ├── portfolio/   # sections du site public
+│   ├── admin/       # tableau de bord
+│   └── i18n/        # messages FR/EN (Paraglide)
+├── components/      # ui/ (shadcn), shared/, layout/
+├── routes/          # routes TanStack (index, admin/*)
+└── server.ts        # entrée SSR (middleware Paraglide)
+scripts/             # migrate (démarrage prod), seed, transfert SQLite → Neon
+drizzle/             # migrations SQL générées
 ```
 
-## Styling
+Le contenu modifiable forme un seul objet `PortfolioData`. Toute modification passe par une
+action nommée (`dispatch`) qui appelle une Server Function validée par Zod ; le cache TanStack
+Query est mis à jour de façon optimiste, puis resynchronisé avec la base. Les détails
+d'architecture et les conventions du projet sont dans [`CLAUDE.md`](CLAUDE.md).
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+## Administration
 
-### Removing Tailwind CSS
+`/admin` est protégé par `ADMIN_PASSWORD` (session conservée dans `sessionStorage`). On y gère
+tout le contenu, l'ordre des projets et expériences (glisser-déposer), les traductions anglaises
+optionnelles, les messages de contact, ainsi que l'export / import JSON et la réinitialisation
+au contenu par défaut.
 
-If you prefer not to use Tailwind CSS:
+## Déploiement
 
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `pnpm add @tailwindcss/vite tailwindcss --dev`
-
-## Linting & Formatting
-
-
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
-
-```bash
-pnpm lint
-pnpm format
-pnpm check
-```
-
-
-## Shadcn
-
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
-
-```bash
-pnpm dlx shadcn@latest add button
-```
-
-
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+Render (runtime Node natif, `render.yaml`) + Neon. La procédure complète — configuration Neon,
+transfert des données depuis Railway, création du service Render et bascule — est décrite dans
+[`DEPLOY.md`](DEPLOY.md).
