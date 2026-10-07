@@ -202,7 +202,8 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         confirmLabel="Réinitialiser"
         onConfirm={() => {
           resetData()
-          toast.success('Contenu réinitialisé')
+            .then(() => toast.success('Contenu réinitialisé'))
+            .catch(() => toast.error('Échec de la réinitialisation — contenu inchangé.'))
         }}
       />
     </div>

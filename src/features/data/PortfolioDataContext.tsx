@@ -1,5 +1,6 @@
 import { createContext } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import type { Dispatch, ReactNode } from 'react'
 import { getDefaultData } from '#/features/data/defaults'
 import { exportDataAsJson, importDataFromJson } from '#/features/data/storage'
@@ -40,10 +41,9 @@ import type {
   Skill,
 } from '#/features/data/types'
 
-// Command pattern, preserved across the SQLite migration: every mutation is an
-// explicit, named action. The public shape of `dispatch` is unchanged so no
-// consuming component had to change — only the implementation moved from a
-// localStorage reducer to Server Functions (DB writes) behind TanStack Query.
+// Command pattern: every mutation is an explicit, named action, routed to its
+// Server Function (DB write) by `runAction` and mirrored optimistically in the
+// query cache by `applyAction`.
 export type DataAction =
   | { type: 'UPDATE_PERSONAL_INFO'; payload: PersonalInfo }
   | { type: 'ADD_PROJECT'; payload: Project }
@@ -183,8 +183,10 @@ export interface PortfolioDataContextValue {
   isHydrated: boolean
   exportData: () => void
   importData: (file: File) => Promise<void>
-  resetData: () => void
+  resetData: () => Promise<void>
 }
+
+const PORTFOLIO_MUTATION_KEY = ['portfolio-data', 'mutation'] as const
 
 export const PortfolioDataContext =
   createContext<PortfolioDataContextValue | null>(null)
@@ -200,8 +202,9 @@ export function PortfolioDataProvider({ children }: { children: ReactNode }) {
   // One mutation funnels every action. The cache is updated optimistically so
   // the UI reflects the write immediately (no wait for the round-trip on a slow
   // remote DB); on error we roll back to the pre-mutation snapshot, and we
-  // always invalidate on settle so the server remains the final authority.
+  // invalidate once writes settle so the server remains the final authority.
   const mutation = useMutation({
+    mutationKey: PORTFOLIO_MUTATION_KEY,
     mutationFn: runAction,
     onMutate: async (action) => {
       await queryClient.cancelQueries({ queryKey: PORTFOLIO_DATA_KEY })
@@ -217,30 +220,38 @@ export function PortfolioDataProvider({ children }: { children: ReactNode }) {
         queryClient.setQueryData(PORTFOLIO_DATA_KEY, context.previous)
       }
     },
-    onSettled: () => invalidate(),
+    // Refetch only when the last in-flight write settles: an earlier refetch
+    // would return server state missing the pending writes and flash it back.
+    onSettled: () =>
+      queryClient.isMutating({ mutationKey: PORTFOLIO_MUTATION_KEY }) === 1
+        ? invalidate()
+        : undefined,
   })
 
-  // SSR / first paint shows the seed defaults (the DB may not be loaded yet),
-  // matching the previous localStorage behaviour and avoiding hydration drift.
+  // The root loader prefetches the real data during SSR; the seed defaults are
+  // only a fallback if the query has no data yet (e.g. the prefetch failed).
   const data = query.data ?? getDefaultData()
 
   const value: PortfolioDataContextValue = {
     data,
     isHydrated: query.isSuccess,
-    // Same signature as the old reducer dispatch (fire-and-forget, void).
+    // Fire-and-forget for callers; a failed write is rolled back by `onError`
+    // and surfaced here so the admin is never left believing it was saved.
     dispatch: (action) => {
-      mutation.mutate(action)
+      mutation.mutate(action, {
+        onError: () =>
+          toast.error("Échec de l'enregistrement — modification annulée."),
+      })
     },
     exportData: () => exportDataAsJson(data),
     importData: async (file: File) => {
       // Validate the JSON client-side first (clear error to the user), then the
       // Server Function validates again before touching the DB.
       const imported = await importDataFromJson(file)
-      await importPortfolioData({ data: imported })
-      await invalidate()
+      await mutation.mutateAsync({ type: 'IMPORT_DATA', payload: imported })
     },
-    resetData: () => {
-      mutation.mutate({ type: 'RESET_TO_DEFAULTS' })
+    resetData: async () => {
+      await mutation.mutateAsync({ type: 'RESET_TO_DEFAULTS' })
     },
   }
 
