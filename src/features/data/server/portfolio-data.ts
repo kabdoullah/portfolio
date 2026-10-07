@@ -16,7 +16,7 @@ import type {
   Skill,
 } from '#/features/data/types'
 
-/** SQLite reads nullable columns back as `null`; the TS types use `undefined`. */
+/** Postgres reads nullable columns back as `null`; the TS types use `undefined`. */
 function nullToUndefined<T>(value: T | null): T | undefined {
   return value ?? undefined
 }

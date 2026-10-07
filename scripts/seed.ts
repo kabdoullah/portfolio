@@ -5,8 +5,7 @@
  *   pnpm db:seed        # seed an already-migrated DB
  *   pnpm db:setup       # push schema + seed in one go
  *
- * Honours DATABASE_URL / DATABASE_AUTH_TOKEN (Turso) the same as the app;
- * defaults to the local `file:portfolio.db`.
+ * Uses DATABASE_URL (loaded from .env.local by the npm script), like the app.
  */
 import { seedDatabase } from '#/features/data/db/seed'
 

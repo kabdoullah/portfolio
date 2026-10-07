@@ -4,8 +4,8 @@
  * DB is empty — so redeploys never wipe edited content. Idempotent: safe to run
  * on every boot. Invoked by the `start` script before the server comes up.
  */
-import { migrate } from 'drizzle-orm/libsql/migrator'
-import { db } from '#/features/data/db/client'
+import { migrate } from 'drizzle-orm/postgres-js/migrator'
+import { db, queryClient } from '#/features/data/db/client'
 import { seedDatabase } from '#/features/data/db/seed'
 
 async function main() {
@@ -18,6 +18,7 @@ async function main() {
     await seedDatabase()
     console.log('✓ migrations applied + seeded default content (first run)')
   }
+  await queryClient.end()
   process.exit(0)
 }
 

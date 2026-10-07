@@ -5,7 +5,7 @@ import { SINGLETON_ID } from '#/features/data/db/constants'
 // Server-only helper, deliberately in its own file. It must NOT live alongside a
 // Server Function that the client imports: it is a plain (non-`createServerFn`)
 // function that touches `db`, so the TanStack server-fn split would leave its
-// `db/client` import (→ @libsql/client, Node built-ins) in the client bundle and
+// `db/client` import (→ postgres.js, Node built-ins) in the client bundle and
 // crash the browser. Importers are server-fn handlers only.
 
 /**
