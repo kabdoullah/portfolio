@@ -17,7 +17,8 @@ services:
     # `start` = migrate-on-start (seed only on an empty DB) then `vite preview`
     # on $PORT. It only needs tsx/vite from node_modules, so plain npm runs it.
     startCommand: npm run start
-    healthCheckPath: /
+    # Lightweight probe answered in src/server.ts (no SSR, no DB query).
+    healthCheckPath: /health
     envVars:
       - key: DATABASE_URL
         sync: false
