@@ -31,7 +31,10 @@ import {
   updateEducation,
 } from '#/features/data/server/education'
 import { updatePersonalInfo } from '#/features/data/server/settings'
-import { importPortfolioData, resetToDefaults } from '#/features/data/server/data'
+import {
+  importPortfolioData,
+  resetToDefaults,
+} from '#/features/data/server/data'
 import type {
   Education,
   Experience,
@@ -151,11 +154,20 @@ function applyAction(data: PortfolioData, action: DataAction): PortfolioData {
 
     case 'ADD_EXPERIENCE':
     case 'UPDATE_EXPERIENCE':
-      return { ...base, experiences: upsertById(base.experiences, action.payload) }
+      return {
+        ...base,
+        experiences: upsertById(base.experiences, action.payload),
+      }
     case 'DELETE_EXPERIENCE':
-      return { ...base, experiences: removeById(base.experiences, action.payload) }
+      return {
+        ...base,
+        experiences: removeById(base.experiences, action.payload),
+      }
     case 'REORDER_EXPERIENCES':
-      return { ...base, experiences: reorderById(base.experiences, action.payload) }
+      return {
+        ...base,
+        experiences: reorderById(base.experiences, action.payload),
+      }
 
     case 'ADD_SKILL':
     case 'UPDATE_SKILL':
@@ -208,7 +220,8 @@ export function PortfolioDataProvider({ children }: { children: ReactNode }) {
     mutationFn: runAction,
     onMutate: async (action) => {
       await queryClient.cancelQueries({ queryKey: PORTFOLIO_DATA_KEY })
-      const previous = queryClient.getQueryData<PortfolioData>(PORTFOLIO_DATA_KEY)
+      const previous =
+        queryClient.getQueryData<PortfolioData>(PORTFOLIO_DATA_KEY)
       queryClient.setQueryData<PortfolioData>(
         PORTFOLIO_DATA_KEY,
         applyAction(previous ?? getDefaultData(), action),

@@ -105,9 +105,7 @@ describe('localizePortfolioData', () => {
     const withEmpty = localizePortfolioData(
       {
         ...base,
-        projects: [
-          { ...base.projects[0], titleEn: '   ', highlightsEn: [] },
-        ],
+        projects: [{ ...base.projects[0], titleEn: '   ', highlightsEn: [] }],
       },
       'en',
     )

@@ -7,7 +7,9 @@ import { z } from 'zod'
  * bundle). Returns only a boolean; the secret never reaches the browser.
  */
 export const verifyAdminPassword = createServerFn({ method: 'POST' })
-  .validator((input: unknown) => z.object({ password: z.string() }).parse(input))
+  .validator((input: unknown) =>
+    z.object({ password: z.string() }).parse(input),
+  )
   .handler(async ({ data }) => {
     const expected = process.env.ADMIN_PASSWORD ?? 'admin2025'
     return { isValid: data.password === expected }
